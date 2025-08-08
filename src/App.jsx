@@ -11,12 +11,11 @@ import AgentManagement from "./pages/agents/AgentManagement";
 function App() {
   return (
     <Routes>
-      {/* Public route */}
+      <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<Login />} />
 
-      {/* Protected with layout */}
       <Route element={<ProtectedRoute />}>
-        <Route element={<MainLayout />}>
+        <Route  element={<MainLayout />}>
           {/* Admin */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/leads" element={<AllLeads />} />

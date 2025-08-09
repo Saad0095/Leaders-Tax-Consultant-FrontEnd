@@ -9,29 +9,24 @@ import { useLocation } from "react-router-dom";
 const Navbar = ({ isOpen, setIsOpen }) => {
   const [user, setUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const {pathname} = useLocation() 
-  const handleProfileClick = async () => {
-    try {
-      const data = await api.get(`/api/auth/users/${user.id}`);
-      setUser(data);
-      setShowModal(true);
-    } catch (error) {
-      console.log(error);
-      
-    }
-  };
+  const { pathname } = useLocation();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
+    const fetchUser = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
       try {
         const decoded = jwtDecode(token);
-        setUser(decoded);
+        const data = await api.get(`/api/auth/users/${decoded.id}`);
+        setUser(data);
       } catch (error) {
-        console.error("Failed to decode token:", error);
+        console.error(error);
         localStorage.removeItem("token");
       }
-    }
+    };
+
+    fetchUser();
   }, [pathname]);
 
   return (
@@ -53,14 +48,11 @@ const Navbar = ({ isOpen, setIsOpen }) => {
         <FaBell className="text-xl text-gray-600 cursor-pointer" />
         <FaUserCircle
           className="text-2xl text-gray-600 cursor-pointer"
-          onClick={handleProfileClick}
+          onClick={() => setShowModal(true)}
         />
       </div>
       {showModal && (
-        <ProfileModal
-          user={user}
-          onClose={() => setShowModal(false)}
-        />
+        <ProfileModal user={user} onClose={() => setShowModal(false)} />
       )}
     </div>
   );

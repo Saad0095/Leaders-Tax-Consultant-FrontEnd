@@ -59,14 +59,13 @@ const Dashboard = () => {
     { key: "closed", label: "Closed", icon: <FiBriefcase /> },
   ];
 
-  // Explicit color classes per status key (for border and bg)
   const statusStyles = {
     meetingFixed: "border-blue-500 bg-blue-50 text-blue-600",
     meetingDone: "border-green-500 bg-green-50 text-green-600",
     inFollowUp: "border-yellow-500 bg-yellow-50 text-yellow-600",
     notInterested: "border-red-500 bg-red-50 text-red-600",
     notResponding: "border-gray-500 bg-gray-50 text-gray-600",
-    dealDone: "border-green-600 bg-green-100 text-green-700", // emerald replaced with green variants
+    dealDone: "border-green-600 bg-green-100 text-green-700", 
     closed: "border-purple-500 bg-purple-50 text-purple-600",
   };
 

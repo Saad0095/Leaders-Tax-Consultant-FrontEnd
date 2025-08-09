@@ -3,23 +3,24 @@ import { useState } from "react";
 import api from "../../utils/api";
 import { toast, ToastContainer } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
+import Loading from "../../components/Loading";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
+      setLoading(true);
       const response = await api.post("/api/auth/login", { email, password });
-      console.log(response);
 
       localStorage.setItem("token", response.token);
       const { role } = jwtDecode(response.token);
-      console.log(role);
-      
+
       toast.success(response.message || "Logged in!");
 
       setTimeout(() => {
@@ -37,13 +38,16 @@ const Login = () => {
         error?.response?.data?.message || "Something went wrong!";
 
       toast.error(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-secondary">
       <ToastContainer />
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+      {!loading ? (
+        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h2 className="text-3xl font-bold text-center text-primary mb-6">
           Login
         </h2>
@@ -79,11 +83,13 @@ const Login = () => {
           <button
             type="submit"
             className="w-full bg-primary hover:bg-[#0d276c] text-white font-semibold py-2 rounded-lg transition-all cursor-pointer"
+            disabled={loading}
           >
             Login
           </button>
         </form>
       </div>
+      ) : <Loading/>}
     </div>
   );
 };

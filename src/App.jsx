@@ -9,6 +9,8 @@ import MainLayout from "./layout/MainLayout";
 import AgentManagement from "./pages/agents/AgentManagement";
 import NotFound from "./pages/auth/NotFound";
 import { AuthProvider } from "./context/AuthContext";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
 
         <Route element={<ProtectedRoute />}>
           <Route element={<MainLayout />}>

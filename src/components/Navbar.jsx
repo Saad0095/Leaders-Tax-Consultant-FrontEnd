@@ -34,18 +34,22 @@ const Navbar = ({ isOpen, setIsOpen }) => {
       <div className="flex justify-center items-center">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden flex text-3xl text-black cursor-pointer"
+          className="md:hidden flex text-3xl mr-3 text-black cursor-pointer"
         >
           <HiMenu />
         </button>
-        <img
-          src="https://leaderstaxconsultant.com/wp-content/uploads/2025/08/Leaders-logo-final-white-1.webp"
-          alt="Logo"
-          className="md:hidden flex w-32"
-        />
+        <div className="flex items-center">
+          {user?.name ? (
+            <span className="text-gray-700 font-semibold text-lg">
+              Hello, {user.name.split(" ")[0]}!
+            </span>
+          ) : (
+            <span className="text-gray-600 italic text-lg">Welcome</span>
+          )}
+        </div>
       </div>
       <div className="flex items-center gap-6">
-        <FaBell className="text-xl text-gray-600 cursor-pointer" />
+        {/* <FaBell className="text-xl text-gray-600 cursor-pointer" /> */}
         <FaUserCircle
           className="text-2xl text-gray-600 cursor-pointer"
           onClick={() => setShowModal(true)}

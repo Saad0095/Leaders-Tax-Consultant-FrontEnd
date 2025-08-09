@@ -44,9 +44,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
   return (
     <>
       <aside
-        className={`bg-primary fixed top-0 left-0 z-40 min-h-full w-72 transition-transform duration-300 ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 md:static md:block shadow-lg`}
+        className={`bg-primary fixed top-0 left-0 z-40 min-h-full w-60 shadow-lg transition-transform duration-300 ${isOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
       >
         <div className="p-6">
           <img
@@ -63,7 +61,9 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
               to={link.path}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-2 rounded-md font-medium transition-all ${
-                  isActive ? "bg-secondary text-white" : "text-white hover:bg-white/10"
+                  isActive
+                    ? "bg-secondary text-white"
+                    : "text-white hover:bg-white/10"
                 }`
               }
               onClick={() => setIsOpen(false)}

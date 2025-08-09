@@ -10,7 +10,7 @@ const MainLayout = () => {
     <div className="min-h-screen bg-gray-50 flex">
       <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
 
-      <div className="transition-all duration-300 w-full">
+      <div className="transition-all duration-300 w-full md:ml-60">
         <Navbar isOpen={isOpen} setIsOpen={setIsOpen} />
         <Outlet />
       </div>

@@ -31,7 +31,7 @@ const Login = () => {
         } else {
           navigate("/login");
         }
-      }, 1000);
+      }, 500);
     } catch (error) {
       console.error("Login Error:", error);
       const errorMessage =

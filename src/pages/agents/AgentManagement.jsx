@@ -5,6 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import ProfileModal from "../../components/ProfileModal";
 import EditUserModal from "../../components/EditUserModal";
 import AddUserModal from "../../components/AddUserModal";
+import Loading from "../../components/Loading";
 
 const AgentManagement = () => {
   const [users, setUsers] = useState([]);
@@ -40,7 +41,6 @@ const AgentManagement = () => {
     fetchUsers();
   }, []);
 
-  // Helper to group users by role
   const groupedUsers = users.reduce((acc, user) => {
     const role = user.role || "Unassigned";
     if (!acc[role]) acc[role] = [];
@@ -50,11 +50,12 @@ const AgentManagement = () => {
 
   const roleOrder = ["admin", "karachi-agent", "dubai-agent", "unassigned"];
 
+  if (loading) return <Loading/>
+
   return (
     <div className="p-4">
       <ToastContainer />
 
-      {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-bold">User Management</h1>
         <button
@@ -65,7 +66,6 @@ const AgentManagement = () => {
         </button>
       </div>
 
-      {/* States */}
       {loading ? (
         <div className="text-gray-500 italic">Loading users...</div>
       ) : users.length === 0 ? (
@@ -76,11 +76,9 @@ const AgentManagement = () => {
             (role) =>
               groupedUsers[role] && (
                 <div key={role}>
-                  {/* Role Heading */}
                   <h2 className="text-xl font-semibold capitalize mb-4 border-b pb-2">
-                    {role.replace("-", " ")}
+                    {role.replace("-", " ")}{"s"}
                   </h2>
-                  {/* Card Grid */}
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {groupedUsers[role].map((user) => (
                       <div
@@ -100,7 +98,6 @@ const AgentManagement = () => {
                           </div>
                         </div>
 
-                        {/* Actions */}
                         <div className="flex gap-2 mt-3">
                           <button
                             onClick={() => setSelectedUser(user)}
@@ -130,7 +127,6 @@ const AgentManagement = () => {
         </div>
       )}
 
-      {/* Modals */}
       {selectedUser && (
         <ProfileModal
           user={selectedUser}

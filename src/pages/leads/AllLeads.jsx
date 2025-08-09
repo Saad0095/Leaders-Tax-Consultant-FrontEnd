@@ -24,7 +24,7 @@ const statusColors = {
 };
 
 const AllLeads = () => {
-  const currentUser = { role: "Admin" }; // e.g., "Creator", "Assignee", or "Admin"
+  const currentUser = { role: "Admin" };
 
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,16 +33,14 @@ const AllLeads = () => {
   const [addingLead, setAddingLead] = useState(false);
   const [dubaiAgents, setDubaiAgents] = useState([]);
   const [assigningLeadId, setAssigningLeadId] = useState(null);
-  const [assignedLeads, setAssignedLeads] = useState({}); // map leadId -> agentId
+  const [assignedLeads, setAssignedLeads] = useState({});
 
-  // Fetch all leads
   const fetchLeads = async () => {
     try {
       setLoading(true);
       const response = await api.get("/api/leads");
       setLeads(response);
 
-      // Build map for assigned leads
       const assignedMap = {};
       response.forEach((lead) => {
         if (lead.assignedTo && lead.assignedTo._id) {
@@ -57,7 +55,6 @@ const AllLeads = () => {
     }
   };
 
-  // Fetch Dubai agents
   const fetchDubaiAgents = async () => {
     try {
       const response = await api.get("/api/auth/dubai-agents");
@@ -72,7 +69,6 @@ const AllLeads = () => {
     fetchDubaiAgents();
   }, []);
 
-  // Fetch single lead by ID
   const fetchLeadById = async (id) => {
     try {
       setLoading(true);
@@ -86,19 +82,16 @@ const AllLeads = () => {
     }
   };
 
-  // Open lead details modal with fresh data
   const openLeadDetail = async (id) => {
     const leadData = await fetchLeadById(id);
     if (leadData) setSelectedLead(leadData);
   };
 
-  // Open edit modal with fresh data
   const openEditLead = async (id) => {
     const leadData = await fetchLeadById(id);
     if (leadData) setEditingLead(leadData);
   };
 
-  // Handle lead deletion (Admin only)
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this lead?")) return;
     try {
@@ -110,15 +103,14 @@ const AllLeads = () => {
     }
   };
 
-  // Handle assign lead to Dubai agent
   const handleAssignToDubaiAgent = async (leadId, userId) => {
     if (!userId) return;
     setAssigningLeadId(leadId);
+    setLoading(true);
     try {
       await api.post("/api/leads/assign", { leadId, userId });
       toast.success("Lead assigned to Dubai agent");
 
-      // Update local assigned leads map
       setAssignedLeads((prev) => ({ ...prev, [leadId]: userId }));
 
       fetchLeads();
@@ -126,10 +118,10 @@ const AllLeads = () => {
       toast.error("Failed to assign lead");
     } finally {
       setAssigningLeadId(null);
+      setLoading(false);
     }
   };
 
-  // Handle lead update from EditLeadModal
   const handleUpdateLead = async (updatedLead) => {
     try {
       setLoading(true);
@@ -150,12 +142,12 @@ const AllLeads = () => {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">📋 All Leads</h1>
-        <button
+        {/* <button
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
           onClick={() => setAddingLead(true)}
         >
           + Add Lead
-        </button>
+        </button> */}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -230,7 +222,7 @@ const AllLeads = () => {
               <div className="flex gap-3">
                 {/* View button - accessible by all */}
                 <button
-                  className="text-blue-500 hover:text-blue-700"
+                  className="text-blue-500 hover:text-blue-700 cursor-pointer"
                   onClick={() => openLeadDetail(lead._id)}
                   title="View Lead"
                 >
@@ -242,7 +234,7 @@ const AllLeads = () => {
                   currentUser.role === "Assignee" ||
                   currentUser.role === "Admin") && (
                   <button
-                    className="text-yellow-500 hover:text-yellow-700"
+                    className="text-yellow-500 hover:text-yellow-700 cursor-pointer"
                     onClick={() => openEditLead(lead._id)}
                     title="Edit Lead"
                   >
@@ -253,7 +245,7 @@ const AllLeads = () => {
                 {/* Delete button - only for Admin */}
                 {currentUser.role === "Admin" && (
                   <button
-                    className="text-red-500 hover:text-red-700"
+                    className="text-red-500 hover:text-red-700 cursor-pointer"
                     onClick={() => handleDelete(lead._id)}
                     title="Delete Lead"
                   >

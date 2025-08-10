@@ -77,7 +77,6 @@ const AgentDashboard = () => {
     { key: "closed", label: "Closed", color: "purple", icon: <FiBriefcase /> },
   ];
 
-  // Fixed Tailwind color classes per status to avoid purge issues
   const statusStyles = {
     meetingFixed: "border-blue-500 bg-blue-50 text-blue-600",
     meetingDone: "border-green-500 bg-green-50 text-green-600",
@@ -94,7 +93,6 @@ const AgentDashboard = () => {
         📋 Agent Dashboard
       </h1>
 
-      {/* Total Leads Summary */}
       <section
         aria-label="Total leads"
         className="bg-indigo-600 text-white rounded-xl shadow-lg p-6 flex items-center space-x-4"

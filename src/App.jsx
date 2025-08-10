@@ -11,6 +11,7 @@ import NotFound from "./pages/auth/NotFound";
 import { AuthProvider } from "./context/AuthContext";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
 
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <ToastContainer position="top-right" autoClose={3000} />
     </AuthProvider>
   );
 }

@@ -49,7 +49,7 @@ const Navbar = ({ isOpen, setIsOpen }) => {
         </div>
       </div>
       <div className="flex items-center gap-6">
-        {/* <FaBell className="text-xl text-gray-600 cursor-pointer" /> */}
+        <FaBell className="text-xl text-gray-600 cursor-pointer" />
         <FaUserCircle
           className="text-2xl text-gray-600 cursor-pointer"
           onClick={() => setShowModal(true)}

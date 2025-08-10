@@ -37,7 +37,7 @@ const Login = () => {
     } catch (error) {
       console.error("Login Error:", error);
       const errorMessage =
-        error?.response?.data?.message || "Something went wrong!";
+        error?.response?.data?.error || "Something went wrong!";
 
       toast.error(errorMessage);
     } finally {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaUser, FaEnvelope, FaUserShield } from "react-icons/fa";
+import { FaUser, FaEnvelope, FaUserShield, FaSearch } from "react-icons/fa";
 import api from "../../utils/api";
 import { toast, ToastContainer } from "react-toastify";
 import ProfileModal from "../../components/ProfileModal";
@@ -13,6 +13,7 @@ const AgentManagement = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [editUser, setEditUser] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchUsers = async () => {
     try {
@@ -41,7 +42,15 @@ const AgentManagement = () => {
     fetchUsers();
   }, []);
 
-  const groupedUsers = users.reduce((acc, user) => {
+  // Filtered users based on search term
+  const filteredUsers = users.filter(
+    (user) =>
+      user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.role?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const groupedUsers = filteredUsers.reduce((acc, user) => {
     const role = user.role || "Unassigned";
     if (!acc[role]) acc[role] = [];
     acc[role].push(user);
@@ -50,25 +59,35 @@ const AgentManagement = () => {
 
   const roleOrder = ["admin", "karachi-agent", "dubai-agent", "unassigned"];
 
-  if (loading) return <Loading/>
+  if (loading) return <Loading />;
 
   return (
     <div className="p-4">
       <ToastContainer />
 
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
         <h1 className="text-2xl font-bold">User Management</h1>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 cursor-pointer"
-        >
-          ➕ Add New User
-        </button>
+        <div className="flex gap-2 w-full sm:w-auto">
+          <div className="relative flex-1 sm:flex-none">
+            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search users..."
+              className="pl-10 pr-4 py-2 border rounded w-full"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <button
+            onClick={() => setShowAddModal(true)}
+            className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 cursor-pointer"
+          >
+            ➕ Add New User
+          </button>
+        </div>
       </div>
 
-      {loading ? (
-        <div className="text-gray-500 italic">Loading users...</div>
-      ) : users.length === 0 ? (
+      {filteredUsers.length === 0 ? (
         <div className="text-gray-500 italic">No users found.</div>
       ) : (
         <div className="space-y-8">
@@ -85,7 +104,6 @@ const AgentManagement = () => {
                         key={user._id}
                         className="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between border hover:shadow-lg transition"
                       >
-                        {/* User Info */}
                         <div className="mb-3 space-y-1">
                           <div className="flex items-center gap-2 font-medium">
                             <FaUser className="text-gray-500" /> {user.name}

@@ -46,7 +46,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary to-secondary">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-400 via-blue-600 to-blue-700">
       <ToastContainer />
       {!loading ? (
         <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">

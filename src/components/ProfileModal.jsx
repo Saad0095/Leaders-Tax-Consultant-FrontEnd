@@ -2,16 +2,15 @@ import React from "react";
 import { FiUser } from "react-icons/fi";
 
 const roleColors = {
-  admin: "bg-red-100 text-red-700",
-  "karachi-agent": "bg-blue-100 text-blue-700",
-  "dubai-agent": "bg-green-100 text-green-700",
-  user: "bg-gray-100 text-gray-700", // fallback role color
+  admin: "bg-red-50 text-red-600 ring-1 ring-red-200",
+  "karachi-agent": "bg-blue-50 text-blue-600 ring-1 ring-blue-200",
+  "dubai-agent": "bg-green-50 text-green-600 ring-1 ring-green-200",
+  user: "bg-gray-50 text-gray-600 ring-1 ring-gray-200",
 };
 
 const ProfileModal = ({ user, onClose }) => {
   const roleClass = roleColors[user.role?.toLowerCase()] || roleColors.user;
 
-  // Capitalize role words properly (handle hyphens nicely)
   const formatRole = (role = "") =>
     role
       .split("-")
@@ -24,18 +23,17 @@ const ProfileModal = ({ user, onClose }) => {
       aria-modal="true"
       aria-labelledby="profile-modal-title"
       tabIndex={-1}
-      className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 transition-opacity"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-xl shadow-2xl max-w-md w-full p-8 relative animate-fadeIn"
+        className="bg-white rounded-2xl shadow-lg max-w-md w-full p-8 relative transform transition-all duration-300 ease-out scale-100 hover:scale-[1.01]"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
         <button
           onClick={onClose}
           aria-label="Close profile modal"
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded cursor-pointer transition"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-lg transition"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -49,46 +47,51 @@ const ProfileModal = ({ user, onClose }) => {
           </svg>
         </button>
 
-        {/* Avatar */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-6">
           {user.avatarUrl ? (
             <img
               src={user.avatarUrl}
               alt={`${user.name}'s avatar`}
-              className="w-28 h-28 rounded-full object-cover shadow-md"
+              className="w-24 h-24 rounded-full object-cover shadow-sm border border-gray-200"
             />
           ) : (
-            <div className="w-28 h-28 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-6xl shadow-md">
+            <div className="w-24 h-24 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-5xl shadow-sm border border-gray-200">
               <FiUser />
             </div>
           )}
         </div>
 
-        {/* Title */}
         <h2
           id="profile-modal-title"
-          className="text-center text-3xl font-semibold text-gray-900 mb-8 tracking-wide"
+          className="text-center text-2xl font-semibold text-gray-900 mb-8 tracking-tight"
         >
           User Profile
         </h2>
 
-        {/* Info */}
-        <dl className="space-y-6 text-gray-800">
+        <dl className="space-y-5 text-gray-800">
           <div>
-            <dt className="text-sm font-semibold uppercase tracking-wide text-gray-600">Name</dt>
-            <dd className="mt-1 text-xl font-medium">{user.name}</dd>
+            <dt className="text-xs font-medium uppercase tracking-wider text-gray-500">
+              Name
+            </dt>
+            <dd className="mt-1 text-lg font-semibold">{user.name}</dd>
           </div>
 
           <div>
-            <dt className="text-sm font-semibold uppercase tracking-wide text-gray-600">Email</dt>
-            <dd className="mt-1 text-lg break-all">{user.email}</dd>
+            <dt className="text-xs font-medium uppercase tracking-wider text-gray-500">
+              Email
+            </dt>
+            <dd className="mt-1 text-base text-gray-700 break-all">
+              {user.email}
+            </dd>
           </div>
 
           <div>
-            <dt className="text-sm font-semibold uppercase tracking-wide text-gray-600">Role</dt>
-            <dd className="mt-1">
+            <dt className="text-xs font-medium uppercase tracking-wider text-gray-500">
+              Role
+            </dt>
+            <dd className="mt-2">
               <span
-                className={`inline-block px-4 py-1 rounded-full text-sm font-semibold tracking-wide ${roleClass}`}
+                className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${roleClass}`}
               >
                 {formatRole(user.role)}
               </span>

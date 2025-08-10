@@ -63,6 +63,7 @@ const EditLeadModalDubai = ({ lead, onClose, onUpdated }) => {
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+      <ToastContainer position="top-right" autoClose={3000} />
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg animate-fadeIn scale-95">
         <div className="flex justify-between items-center border-b px-6 py-4">
           <h2 className="text-xl font-bold text-gray-800">

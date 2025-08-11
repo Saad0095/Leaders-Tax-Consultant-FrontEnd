@@ -4,6 +4,8 @@ import Loading from "../../components/Loading";
 import AddLeadModal from "../../components/AddLeadModal";
 import EditLeadModal from "../../components/EditLeadModal";
 import LeadDetailModal from "../../components/LeadDetailModal";
+import Pagination from "../../components/Pagination";
+import LeadsFilter from "../../components/LeadsFilter";
 import { toast } from "react-toastify";
 import {
   FiBriefcase,
@@ -35,14 +37,72 @@ const AllLeads = () => {
   const [assigningLeadId, setAssigningLeadId] = useState(null);
   const [assignedLeads, setAssignedLeads] = useState({});
 
-  const fetchLeads = async () => {
+  // Pagination state
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    totalPages: 1,
+    totalLeads: 0,
+    hasNextPage: false,
+    hasPrevPage: false,
+    limit: 10
+  });
+
+  // Filter state
+  const [filters, setFilters] = useState({
+    search: "",
+    status: "",
+    startDate: "",
+    endDate: ""
+  });
+
+  const fetchLeads = async (page = 1, limit = 10, searchFilters = {}) => {
     try {
       setLoading(true);
-      const response = await api.get("/api/leads");
-      setLeads(response);
+
+      // Build query parameters
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+        ...searchFilters
+      });
+
+      // Remove empty parameters
+      for (const [key, value] of params.entries()) {
+        if (!value) {
+          params.delete(key);
+        }
+      }
+
+      const response = await api.get(`/api/leads?${params.toString()}`);
+
+      // Handle both old format (array) and new format (object with pagination)
+      if (Array.isArray(response)) {
+        // Fallback for old API response format
+        setLeads(response);
+        setPagination({
+          currentPage: 1,
+          totalPages: 1,
+          totalLeads: response.length,
+          hasNextPage: false,
+          hasPrevPage: false,
+          limit: response.length
+        });
+      } else {
+        // New paginated response format
+        setLeads(response.leads || []);
+        setPagination(response.pagination || {
+          currentPage: 1,
+          totalPages: 1,
+          totalLeads: 0,
+          hasNextPage: false,
+          hasPrevPage: false,
+          limit: 10
+        });
+      }
 
       const assignedMap = {};
-      response.forEach((lead) => {
+      const leadsArray = Array.isArray(response) ? response : (response.leads || []);
+      leadsArray.forEach((lead) => {
         if (lead.assignedTo && lead.assignedTo._id) {
           assignedMap[lead._id] = lead.assignedTo._id;
         }
@@ -50,6 +110,7 @@ const AllLeads = () => {
       setAssignedLeads(assignedMap);
     } catch (err) {
       toast.error("Failed to fetch leads.");
+      setLeads([]);
     } finally {
       setLoading(false);
     }
@@ -62,6 +123,26 @@ const AllLeads = () => {
     } catch {
       toast.error("Failed to fetch Dubai agents.");
     }
+  };
+
+  // Pagination handlers
+  const handlePageChange = (page) => {
+    fetchLeads(page, pagination.limit, filters);
+  };
+
+  const handleLimitChange = (newLimit) => {
+    fetchLeads(1, newLimit, filters);
+  };
+
+  // Filter handlers
+  const handleFilterChange = (newFilters) => {
+    setFilters(prev => ({ ...prev, ...newFilters }));
+    fetchLeads(1, pagination.limit, { ...filters, ...newFilters });
+  };
+
+  const handleSearchChange = (searchTerm) => {
+    setFilters(prev => ({ ...prev, search: searchTerm }));
+    fetchLeads(1, pagination.limit, { ...filters, search: searchTerm });
   };
 
   useEffect(() => {
@@ -150,7 +231,20 @@ const AllLeads = () => {
         </button> */}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {/* Search and Filter */}
+      <LeadsFilter
+        onFilterChange={handleFilterChange}
+        onSearchChange={handleSearchChange}
+        filters={filters}
+      />
+
+      {leads.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg">No leads found.</p>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {leads.map((lead) => {
           const isAssigned = assignedLeads[lead._id] !== undefined;
           const assignedAgentId = assignedLeads[lead._id] || "";
@@ -257,6 +351,18 @@ const AllLeads = () => {
           );
         })}
       </div>
+
+      {/* Pagination */}
+      <Pagination
+        currentPage={pagination.currentPage}
+        totalPages={pagination.totalPages}
+        totalItems={pagination.totalLeads}
+        itemsPerPage={pagination.limit}
+        onPageChange={handlePageChange}
+        onLimitChange={handleLimitChange}
+      />
+      </>
+      )}
 
       {addingLead && (
         <AddLeadModal

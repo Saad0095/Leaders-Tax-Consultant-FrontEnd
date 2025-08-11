@@ -1,4 +1,4 @@
-import { FaTachometerAlt, FaUsers, FaSignOutAlt } from "react-icons/fa";
+import { FaTachometerAlt, FaUsers, FaSignOutAlt, FaUserCog } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
@@ -7,7 +7,7 @@ const sidebarLinks = {
   admin: [
     { label: "Dashboard", path: "/admin/dashboard", icon: <FaTachometerAlt /> },
     { label: "Leads", path: "/admin/leads", icon: <FaUsers /> },
-    { label: "Manage Agents", path: "/admin/agents", icon: <FaUsers /> }, // Optional
+    { label: "Manage Agents", path: "/admin/agents", icon: <FaUserCog />}, // Optional
   ],
   agent: [
     { label: "Dashboard", path: "/agent/dashboard", icon: <FaTachometerAlt /> },

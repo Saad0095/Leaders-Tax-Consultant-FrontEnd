@@ -33,7 +33,7 @@ const ProfileModal = ({ user, onClose }) => {
         <button
           onClick={onClose}
           aria-label="Close profile modal"
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-lg transition"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-lg transition cursor-pointer"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

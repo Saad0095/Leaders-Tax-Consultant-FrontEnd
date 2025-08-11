@@ -135,7 +135,7 @@ const Login = () => {
                     <button
                       type="button"
                       onClick={() => setShowPassword((s) => !s)}
-                      className="absolute inset-y-0 right-0 mr-2 flex h-10 w-10 items-center justify-center rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-primary/60"
+                      className="absolute top-1 inset-y-0 right-0 mr-2 flex h-10 w-10 items-center justify-center rounded-md text-gray-500 hover:text-gray-700 outline-none"
                       aria-label={showPassword ? "Hide password" : "Show password"}
                     >
                       {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}

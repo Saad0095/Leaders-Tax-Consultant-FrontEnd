@@ -12,6 +12,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  console.log("API Base URL:", import.meta.env.VITE_BASE_URL);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -50,9 +51,17 @@ const Login = () => {
       <ToastContainer />
       {!loading ? (
         <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-          <h2 className="text-3xl font-bold text-center text-primary mb-6">
-            Login
+          <div className="p-6">
+            <img
+              src="https://leaderstaxconsultant.com/wp-content/uploads/2025/08/Leaders-logo-final-white-1.webp"
+              alt="Leaders Tax Collection"
+              className="w-40 mx-auto invert"
+            />
+          </div>
+          <h2 className="text-4xl font-bold text-center text-primary mb-2">
+            Welcome Back
           </h2>
+          <p className="text-center text-gray-700 mb-6">Login In to continue</p>
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700">

@@ -10,6 +10,7 @@ import {
   FiFile,
 } from "react-icons/fi";
 import { MdOutlineWhatsapp } from "react-icons/md";
+import InfoRow from "./InfoRow";
 
 const statusColors = {
   "Meeting Fixed": "bg-blue-100 text-blue-800 border border-blue-300",
@@ -21,19 +22,8 @@ const statusColors = {
   Closed: "bg-gray-200 text-gray-800 border border-gray-300",
 };
 
-const InfoRow = ({ icon: Icon, label, value }) => (
-  <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
-    <Icon className="text-gray-500 text-lg flex-shrink-0" />
-    <div>
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className="font-medium text-gray-800">{value || "N/A"}</p>
-    </div>
-  </div>
-);
 
 const LeadDetailModal = ({ lead, onClose }) => {
-  console.log(lead);
-
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl w-full max-w-3xl shadow-2xl animate-fadeIn overflow-hidden">
@@ -49,9 +39,7 @@ const LeadDetailModal = ({ lead, onClose }) => {
           </button>
         </div>
 
-        {/* Body */}
         <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
-          {/* Status */}
           <div>
             <span
               className={`inline-block px-3 py-1 rounded-full text-sm font-medium shadow-sm ${

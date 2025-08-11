@@ -12,6 +12,7 @@ import { AuthProvider } from "./context/AuthContext";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import { ToastContainer } from "react-toastify";
+import Notifications from "./pages/system/Notifications";
 
 function App() {
   return (
@@ -28,10 +29,12 @@ function App() {
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/leads" element={<AllLeads />} />
             <Route path="/admin/agents" element={<AgentManagement />} />
+            <Route path="/admin/notifications" element={<Notifications />} />
 
             {/* Agent */}
             <Route path="/agent/dashboard" element={<AgentDashboard />} />
             <Route path="/agent/leads" element={<MyLeads />} />
+            <Route path="/agent/notifications" element={<Notifications />} />
           </Route>
         </Route>
 

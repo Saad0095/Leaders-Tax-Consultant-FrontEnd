@@ -7,7 +7,7 @@ const sidebarLinks = {
   admin: [
     { label: "Dashboard", path: "/admin/dashboard", icon: <FaTachometerAlt /> },
     { label: "Leads", path: "/admin/leads", icon: <FaUsers /> },
-    { label: "Manage Agents", path: "/admin/agents", icon: <FaUserCog />}, // Optional
+    { label: "Manage Agents", path: "/admin/agents", icon: <FaUserCog />}, 
   ],
   agent: [
     { label: "Dashboard", path: "/agent/dashboard", icon: <FaTachometerAlt /> },

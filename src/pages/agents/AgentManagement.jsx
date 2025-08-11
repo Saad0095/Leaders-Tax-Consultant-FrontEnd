@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaUser, FaEnvelope, FaUserShield, FaSearch } from "react-icons/fa";
+import { FaUser, FaEnvelope, FaUserShield, FaSearch, FaUserCog } from "react-icons/fa";
 import api from "../../utils/api";
 import { toast, ToastContainer } from "react-toastify";
 import ProfileModal from "../../components/ProfileModal";
@@ -65,10 +65,10 @@ const AgentManagement = () => {
     <div className="p-4">
       <ToastContainer />
 
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
-        <h1 className="text-2xl font-bold">User Management</h1>
-        <div className="flex gap-2 w-full sm:w-auto">
-          <div className="relative flex-1 sm:flex-none">
+      <div className="flex flex-col lg:flex-row justify-between items-center mb-8 gap-4">
+        <h1 className="text-3xl font-bold text-gray-800">User Management</h1>
+        <div className="flex gap-2 w-full lg:w-auto">
+          <div className="relative flex-1 lg:flex-none">
             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
               type="text"

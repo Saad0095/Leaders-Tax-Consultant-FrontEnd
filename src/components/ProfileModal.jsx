@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { FiUser } from "react-icons/fi";
+import Loading from "./Loading";
+import { toast, ToastContainer } from "react-toastify";
+import api from "../utils/api";
 
 const roleColors = {
   admin: "bg-red-50 text-red-600 ring-1 ring-red-200",
@@ -9,6 +12,7 @@ const roleColors = {
 };
 
 const ProfileModal = ({ user, onClose }) => {
+  const [loading, setLoading] = useState(false);
   const roleClass = roleColors[user.role?.toLowerCase()] || roleColors.user;
 
   const formatRole = (role = "") =>
@@ -16,6 +20,23 @@ const ProfileModal = ({ user, onClose }) => {
       .split("-")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
+
+  const handleForgetPassword = async (e) => {
+    setLoading(true);
+    try {
+       await api.post("/api/auth/forgot-password", {
+        email: user.email,
+      });
+      toast.success("Password reset email sent. Please check your inbox.");
+    } catch (error) {
+      console.log("Error: ", error);
+
+      const message = error?.response?.data?.message || "Something went wrong!";
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div
@@ -26,6 +47,7 @@ const ProfileModal = ({ user, onClose }) => {
       className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 transition-opacity"
       onClick={onClose}
     >
+      <ToastContainer />
       <div
         className="bg-white rounded-2xl shadow-lg max-w-md w-full p-8 relative transform transition-all duration-300 ease-out scale-100 hover:scale-[1.01]"
         onClick={(e) => e.stopPropagation()}
@@ -43,7 +65,11 @@ const ProfileModal = ({ user, onClose }) => {
             stroke="currentColor"
             strokeWidth={2}
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
 
@@ -83,6 +109,30 @@ const ProfileModal = ({ user, onClose }) => {
             <dd className="mt-1 text-base text-gray-700 break-all">
               {user.email}
             </dd>
+          </div>
+
+          <div className="flex items-end justify-between">
+            <div>
+              <dt className="text-xs font-medium uppercase tracking-wider text-gray-500">
+                Password
+              </dt>
+              <dd className="mt-1 text-base text-gray-700 break-all">
+                ************
+              </dd>
+            </div>
+            {loading ? (
+              <p className="text-sm font-medium text-green-700 italic">
+                Sending... Please wait!
+              </p>
+            ) : (
+              <button
+                type="button"
+                onClick={handleForgetPassword}
+                className="text-sm font-medium text-green-700 underline-offset-4 hover:underline focus:outline-none cursor-pointer"
+              >
+                Reset password
+              </button>
+            )}
           </div>
 
           <div>

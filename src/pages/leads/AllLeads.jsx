@@ -56,7 +56,7 @@ const AllLeads = () => {
     endDate: ""
   });
 
-  const fetchLeads = async (page = 1, limit = 10, searchFilters = {}) => {
+  const fetchLeads = async (page = 1, limit = 12, searchFilters = {}) => {
     try {
       setLoading(true);
 
@@ -97,7 +97,7 @@ const AllLeads = () => {
           totalLeads: 0,
           hasNextPage: false,
           hasPrevPage: false,
-          limit: 10
+          limit: 12
         });
       }
 

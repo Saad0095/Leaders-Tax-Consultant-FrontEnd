@@ -11,7 +11,29 @@ const iconMap = {
 };
 
 const Notifications = () => {
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState([
+      {
+    id: 1,
+    type: "success",
+    title: "Your lead has been assigned to Dubai agent.",
+    timestamp: "2 hours ago",
+    read: false,
+  },
+  {
+    id: 2,
+    type: "info",
+    title: "New update available for your CRM app.",
+    timestamp: "1 day ago",
+    read: true,
+  },
+  {
+    id: 3,
+    type: "error",
+    title: "Failed to sync your data. Please try again.",
+    timestamp: "3 days ago",
+    read: false,
+  },
+  ]);
   const [loading, setLoading] = useState(false);
   const [markingAll, setMarkingAll] = useState(false);
 

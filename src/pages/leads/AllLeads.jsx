@@ -141,8 +141,11 @@ const AllLeads = () => {
   };
 
   const handleSearchChange = (searchTerm) => {
-    setFilters(prev => ({ ...prev, search: searchTerm }));
-    fetchLeads(1, pagination.limit, { ...filters, search: searchTerm });
+    // Update filters state
+    const newFilters = { ...filters, search: searchTerm };
+    setFilters(newFilters);
+    // Fetch with the new filters
+    fetchLeads(1, pagination.limit, newFilters);
   };
 
   useEffect(() => {

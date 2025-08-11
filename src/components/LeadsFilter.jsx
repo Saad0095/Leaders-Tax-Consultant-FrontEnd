@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiSearch, FiFilter, FiX } from "react-icons/fi";
 
 const LeadsFilter = ({ onFilterChange, onSearchChange, filters = {} }) => {
@@ -10,6 +10,16 @@ const LeadsFilter = ({ onFilterChange, onSearchChange, filters = {} }) => {
     endDate: filters.endDate || "",
   });
 
+  // Update local state when filters change from parent
+  useEffect(() => {
+    setSearchTerm(filters.search || "");
+    setLocalFilters({
+      status: filters.status || "",
+      startDate: filters.startDate || "",
+      endDate: filters.endDate || "",
+    });
+  }, [filters]);
+
   const statusOptions = [
     "Meeting Fixed",
     "Meeting Done", 
@@ -20,10 +30,22 @@ const LeadsFilter = ({ onFilterChange, onSearchChange, filters = {} }) => {
     "Closed"
   ];
 
-  const handleSearchChange = (e) => {
+  const handleSearchInputChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-    onSearchChange(value);
+    // Just update the input value, don't trigger search automatically
+  };
+
+  const handleSearchSubmit = () => {
+    // Trigger search when user explicitly wants to search
+    onSearchChange(searchTerm);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSearchSubmit();
+    }
   };
 
   const handleFilterChange = (key, value) => {
@@ -40,6 +62,7 @@ const LeadsFilter = ({ onFilterChange, onSearchChange, filters = {} }) => {
     };
     setLocalFilters(clearedFilters);
     setSearchTerm("");
+
     onFilterChange(clearedFilters);
     onSearchChange("");
   };
@@ -56,9 +79,17 @@ const LeadsFilter = ({ onFilterChange, onSearchChange, filters = {} }) => {
             type="text"
             placeholder="Search leads by company, customer, email, mobile, status..."
             value={searchTerm}
-            onChange={handleSearchChange}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            onChange={handleSearchInputChange}
+            onKeyDown={handleKeyDown}
+            className="w-full pl-10 pr-12 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
+          <button
+            onClick={handleSearchSubmit}
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-blue-600 transition-colors"
+            title="Search (or press Enter)"
+          >
+            <FiSearch className="w-4 h-4" />
+          </button>
         </div>
         
         <div className="flex gap-2">

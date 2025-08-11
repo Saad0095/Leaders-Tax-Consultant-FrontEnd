@@ -43,6 +43,8 @@ const AddLeadModal = ({ onLeadAdded, onClose }) => {
   const onSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
+    console.log(leadData);
+    
     try {
       await api.post("/api/leads", leadData);
       setSubmitting(false);
@@ -81,7 +83,7 @@ const AddLeadModal = ({ onLeadAdded, onClose }) => {
               Basic Info
             </h3>
           </div>
-          <div className="flex items-center border rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
+          <div className="flex items-center border border-gray-300 rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
             <FiBriefcase className="text-gray-400 mr-2" />
             <input
               type="text"
@@ -94,7 +96,7 @@ const AddLeadModal = ({ onLeadAdded, onClose }) => {
               required
             />
           </div>
-          <div className="flex items-center border rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
+          <div className="flex items-center border border-gray-300 rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
             <FiUser className="text-gray-400 mr-2" />
             <input
               type="text"
@@ -114,7 +116,7 @@ const AddLeadModal = ({ onLeadAdded, onClose }) => {
               Contact Info
             </h3>
           </div>
-          <div className="flex items-center border rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
+          <div className="flex items-center border border-gray-300 rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
             <FiMail className="text-gray-400 mr-2" />
             <input
               type="email"
@@ -127,7 +129,7 @@ const AddLeadModal = ({ onLeadAdded, onClose }) => {
               required
             />
           </div>
-          <div className="flex items-center border rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
+          <div className="flex items-center border border-gray-300 rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
             <FiPhone className="text-gray-400 mr-2" />
             <input
               type="text"
@@ -140,7 +142,7 @@ const AddLeadModal = ({ onLeadAdded, onClose }) => {
               required
             />
           </div>
-          <div className="flex items-center border rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
+          <div className="flex items-center border border-gray-300 rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
             <FiMessageSquare className="text-gray-400 mr-2" />
             <input
               type="text"
@@ -159,7 +161,7 @@ const AddLeadModal = ({ onLeadAdded, onClose }) => {
               Lead Details
             </h3>
           </div>
-          <div className="flex items-center border rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
+          <div className="flex items-center border border-gray-300 rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
             <FiMapPin className="text-gray-400 mr-2" />
             <select
               name="emirate"
@@ -178,7 +180,7 @@ const AddLeadModal = ({ onLeadAdded, onClose }) => {
               <option value="Umm Al Quwain">Umm Al Quwain</option>
             </select>
           </div>
-          <div className="flex items-center border rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
+          <div className="flex items-center border border-gray-300 rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
             <FiMapPin className="text-gray-400 mr-2" />
             <input
               type="text"
@@ -190,7 +192,7 @@ const AddLeadModal = ({ onLeadAdded, onClose }) => {
               disabled={submitting}
             />
           </div>
-          <div className="flex items-center border rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
+          <div className="flex items-center border border-gray-300 rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
             <FiCalendar className="text-gray-400 mr-2" />
             <input
               type="datetime-local"
@@ -201,7 +203,7 @@ const AddLeadModal = ({ onLeadAdded, onClose }) => {
               disabled={submitting}
             />
           </div>
-          <div className="flex items-center border rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
+          <div className="flex items-center border border-gray-300 rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
             <FiGlobe className="text-gray-400 mr-2" />
             <select
               name="language"
@@ -216,7 +218,7 @@ const AddLeadModal = ({ onLeadAdded, onClose }) => {
               <option value="Hindi">Hindi</option>
             </select>
           </div>
-          <div className="flex items-center border rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
+          <div className="flex items-center border border-gray-300 rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
             <FiGlobe className="text-gray-400 mr-2" />
             <select
               name="service"
@@ -241,7 +243,7 @@ const AddLeadModal = ({ onLeadAdded, onClose }) => {
             </select>
           </div>
 
-          <div className="flex items-center border rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
+          <div className="flex items-center border border-gray-300 rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
             <FiTag className="text-gray-400 mr-2" />
             <select
               name="status"

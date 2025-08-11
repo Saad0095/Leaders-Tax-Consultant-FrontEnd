@@ -33,7 +33,6 @@ const InfoRow = ({ icon: Icon, label, value }) => (
 
 const LeadDetailModal = ({ lead, onClose }) => {
   console.log(lead);
-  
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -124,7 +123,16 @@ const LeadDetailModal = ({ lead, onClose }) => {
             />
           </div>
 
-          {/* Files */}
+          <InfoRow
+            icon={FiFileText}
+            label="Revenue Amount"
+            value={
+              lead.revenueAmount !== undefined && lead.revenueAmount !== null
+                ? `$${lead.revenueAmount.toLocaleString()}`
+                : "N/A"
+            }
+          />
+
           {lead.files?.length > 0 && (
             <div>
               <h3 className="font-semibold text-gray-800 mb-2">Files</h3>
@@ -149,7 +157,9 @@ const LeadDetailModal = ({ lead, onClose }) => {
           {/* Status History */}
           {lead.statusHistory?.length > 0 && (
             <div>
-              <h3 className="font-semibold text-gray-800 mb-2">Status History</h3>
+              <h3 className="font-semibold text-gray-800 mb-2">
+                Status History
+              </h3>
               <ul className="space-y-2 text-sm">
                 {lead.statusHistory.map((s) => (
                   <li
@@ -157,8 +167,13 @@ const LeadDetailModal = ({ lead, onClose }) => {
                     className="bg-white border border-gray-100 p-3 rounded-lg shadow-sm hover:bg-gray-50 transition"
                   >
                     <strong className="text-gray-800">{s.status}</strong> by{" "}
-                    <span className="text-blue-600">{s.updatedBy?.name || "N/A"}</span>{" "}
-                    — <span className="text-gray-500">{new Date(s.changedAt).toLocaleString()}</span>
+                    <span className="text-blue-600">
+                      {s.updatedBy?.name || "N/A"}
+                    </span>{" "}
+                    —{" "}
+                    <span className="text-gray-500">
+                      {new Date(s.changedAt).toLocaleString()}
+                    </span>
                   </li>
                 ))}
               </ul>

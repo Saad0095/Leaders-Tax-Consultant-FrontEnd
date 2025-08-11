@@ -16,6 +16,7 @@ const AgentManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const fetchUsers = async () => {
+    setLoading(true);
     try {
       const data = await api.get("/api/auth/users");
       setUsers(data);
@@ -42,7 +43,6 @@ const AgentManagement = () => {
     fetchUsers();
   }, []);
 
-  // Filtered users based on search term
   const filteredUsers = users.filter(
     (user) =>
       user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -73,7 +73,7 @@ const AgentManagement = () => {
             <input
               type="text"
               placeholder="Search users..."
-              className="pl-10 pr-4 py-2 border rounded w-full"
+              className="pl-10 pr-4 py-2 border border-gray-300 rounded w-full outline-primary"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -90,19 +90,19 @@ const AgentManagement = () => {
       {filteredUsers.length === 0 ? (
         <div className="text-gray-500 italic">No users found.</div>
       ) : (
-        <div className="space-y-8">
+        <div className="space-y-8 ">
           {roleOrder.map(
             (role) =>
               groupedUsers[role] && (
-                <div key={role}>
-                  <h2 className="text-xl font-semibold capitalize mb-4 border-b pb-2">
+                <div key={role} className="py-4">
+                  <h2 className="text-2xl font-semibold capitalize mb-4 pb-2">
                     {role.replace("-", " ")}{"s"}
                   </h2>
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {groupedUsers[role].map((user) => (
                       <div
                         key={user._id}
-                        className="bg-white shadow-md rounded-lg p-4 flex flex-col justify-between border hover:shadow-lg transition"
+                        className="bg-white shadow-md shadow-gray-300 rounded-lg p-4 flex flex-col justify-between hover:shadow-lg transition "
                       >
                         <div className="mb-3 space-y-1">
                           <div className="flex items-center gap-2 font-medium">

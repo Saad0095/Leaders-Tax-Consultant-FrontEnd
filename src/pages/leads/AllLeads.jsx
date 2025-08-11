@@ -13,14 +13,18 @@ import {
   FiEye,
   FiEdit2,
   FiTrash,
+  FiFilter,
+  FiSearch,
 } from "react-icons/fi";
 
 const statusColors = {
   "Meeting Fixed": "bg-blue-100 text-blue-700",
   "Meeting Done": "bg-green-100 text-green-700",
-  Postponed: "bg-yellow-100 text-yellow-700",
-  Cancelled: "bg-red-100 text-red-700",
-  Closed: "bg-gray-200 text-gray-700",
+  "In Follow-up": "bg-yellow-100 text-yellow-700",
+  "Not Interested": "bg-red-100 text-red-700",
+  "Not Responding": "bg-red-100 text-red-700",
+  "Deal Done": "bg-green-100 text-green-800",
+  "Closed": "bg-gray-200 text-gray-700",
 };
 
 const AllLeads = () => {
@@ -35,10 +39,21 @@ const AllLeads = () => {
   const [assigningLeadId, setAssigningLeadId] = useState(null);
   const [assignedLeads, setAssignedLeads] = useState({});
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
+
   const fetchLeads = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/api/leads");
+
+      const params = new URLSearchParams();
+      if (searchTerm.trim() !== "") params.append("search", searchTerm.trim());
+      if (statusFilter) params.append("status", statusFilter);
+
+      console.log(`/api/leads?${params.toString()}`);
+
+      const response = await api.get(`/api/leads?${params.toString()}`);
+
       setLeads(response);
 
       const assignedMap = {};
@@ -65,9 +80,12 @@ const AllLeads = () => {
   };
 
   useEffect(() => {
-    fetchLeads();
     fetchDubaiAgents();
   }, []);
+
+  useEffect(() => {
+    fetchLeads();
+  }, [searchTerm, statusFilter]);
 
   const fetchLeadById = async (id) => {
     try {
@@ -140,14 +158,49 @@ const AllLeads = () => {
 
   return (
     <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">📋 All Leads</h1>
-        {/* <button
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          onClick={() => setAddingLead(true)}
-        >
-          + Add Lead
-        </button> */}
+      <div className="flex flex-wrap items-center gap-4 mb-6">
+        <h1 className="text-2xl font-bold flex-grow">📋 All Leads</h1>
+
+        <div className="relative max-w-xs w-full">
+          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+          <input
+            type="text"
+            placeholder="Search leads..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition outline-none" 
+          />
+        </div>
+
+        <div className="relative max-w-xs w-full">
+          <FiFilter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="w-full pl-10 pr-6 py-2 rounded-lg border border-gray-300 shadow-sm appearance-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition cursor-pointer outline-none"
+          >
+            <option value="">All Statuses</option>
+            {Object.keys(statusColors).map((status) => (
+              <option key={status} value={status}>
+                {status}
+              </option>
+            ))}
+          </select>
+          <svg
+            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -220,7 +273,6 @@ const AllLeads = () => {
               </div>
 
               <div className="flex gap-3">
-                {/* View button - accessible by all */}
                 <button
                   className="text-blue-500 hover:text-blue-700 cursor-pointer"
                   onClick={() => openLeadDetail(lead._id)}
@@ -229,7 +281,6 @@ const AllLeads = () => {
                   <FiEye size={18} />
                 </button>
 
-                {/* Edit button - only for Creator, Assignee, Admin */}
                 {(currentUser.role === "Creator" ||
                   currentUser.role === "Assignee" ||
                   currentUser.role === "Admin") && (
@@ -242,7 +293,6 @@ const AllLeads = () => {
                   </button>
                 )}
 
-                {/* Delete button - only for Admin */}
                 {currentUser.role === "Admin" && (
                   <button
                     className="text-red-500 hover:text-red-700 cursor-pointer"

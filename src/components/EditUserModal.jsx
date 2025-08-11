@@ -31,14 +31,13 @@ const EditUserModal = ({ user, onClose, onUpdated }) => {
     }
   };
 
+  if(loading) return <Loading/>;
+  
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 transition-opacity duration-300">
       <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-2xl animate-scaleIn">
         <h2 className="text-2xl font-semibold mb-6 text-center border-b pb-2">✏️ Edit User</h2>
 
-        {loading ? (
-          <Loading />
-        ) : (
           <form onSubmit={handleSubmit} className="space-y-4 text-gray-700">
             <input
               type="text"
@@ -83,7 +82,6 @@ const EditUserModal = ({ user, onClose, onUpdated }) => {
               </button>
             </div>
           </form>
-        )}
       </div>
     </div>
   );

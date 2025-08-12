@@ -20,7 +20,6 @@ const AgentDashboard = () => {
     async function fetchStats() {
       try {
         const res = await api.get("/api/leads/dashboard/stats");
-        console.log(res);
         setData(res);
       } catch {
         setError("Failed to load dashboard stats");

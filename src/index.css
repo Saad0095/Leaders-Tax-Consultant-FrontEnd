@@ -12,3 +12,14 @@
 body {
   font-family: "Roboto", sans-serif;
 }
+
+.react-datetime-picker__wrapper {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.react-datetime-picker__inputGroup input {
+  outline: none !important;
+}
+

@@ -119,19 +119,19 @@ const AgentManagement = () => {
                         <div className="flex gap-2 mt-3">
                           <button
                             onClick={() => setSelectedUser(user)}
-                            className="flex-1 text-sm px-3 py-1 rounded bg-blue-500 text-white hover:bg-blue-600 cursor-pointer"
+                            className="flex-1 text-sm px-3 py-1 rounded bg-white border border-blue-500 text-blue-500 transform transition-all  duration-200 hover:shadow hover:shadow-gray-300 hover:-translate-y-1 hover:bg-blue-500 hover:text-white cursor-pointer "
                           >
                             View
                           </button>
                           <button
                             onClick={() => setEditUser(user)}
-                            className="flex-1 text-sm px-3 py-1 rounded bg-yellow-500 text-white hover:bg-yellow-600 cursor-pointer"
+                            className="flex-1 text-sm px-3 py-1 rounded bg-white border border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white cursor-pointer transform transition-all  duration-200 hover:shadow hover:shadow-gray-300 hover:-translate-y-1"
                           >
                             Edit
                           </button>
                           <button
                             onClick={() => handleDelete(user._id)}
-                            className="flex-1 text-sm px-3 py-1 rounded bg-red-500 text-white hover:bg-red-600 cursor-pointer"
+                            className="flex-1 text-sm px-3 py-1 rounded bg-white border border-red-500 text-red-500 hover:bg-red-600 hover:text-white cursor-pointer transform transition-all  duration-200 hover:shadow hover:shadow-gray-300 hover:-translate-y-1"
                           >
                             Delete
                           </button>

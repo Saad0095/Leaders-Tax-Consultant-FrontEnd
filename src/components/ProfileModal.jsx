@@ -122,7 +122,7 @@ const ProfileModal = ({ user, onClose }) => {
             </div>
             {loading ? (
               <p className="text-sm font-medium text-green-700 italic">
-                Sending... Please wait!
+                Sending Reset Link... Please wait!
               </p>
             ) : (
               <button

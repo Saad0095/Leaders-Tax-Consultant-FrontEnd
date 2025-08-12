@@ -12,7 +12,11 @@ import {
   FiX,
   FiEdit3,
 } from "react-icons/fi";
-import api from "../utils/api"; // your api helper
+import api from "../utils/api";
+import DateTimePicker from "react-datetime-picker";
+import "react-datetime-picker/dist/DateTimePicker.css";
+import "react-calendar/dist/Calendar.css";
+import "react-clock/dist/Clock.css";
 
 const AddLeadModal = ({ onLeadAdded, onClose }) => {
   const [leadData, setLeadData] = useState({
@@ -44,7 +48,7 @@ const AddLeadModal = ({ onLeadAdded, onClose }) => {
     e.preventDefault();
     setSubmitting(true);
     console.log(leadData);
-    
+
     try {
       await api.post("/api/leads", leadData);
       setSubmitting(false);
@@ -59,13 +63,12 @@ const AddLeadModal = ({ onLeadAdded, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl relative animate-fadeIn max-h-[90vh] overflow-y-auto">
-        {/* Header */}
         <div className="flex justify-between items-center mb-6 border-b pb-3 sticky top-0 bg-white z-10 p-6">
           <h2 className="text-xl font-semibold text-gray-800">Add New Lead</h2>
           <button
             onClick={onClose}
             type="button"
-            className="text-gray-500 hover:text-gray-700"
+            className="cursor-pointer text-gray-500 hover:text-gray-700"
             disabled={submitting}
           >
             <FiX size={22} />
@@ -77,7 +80,6 @@ const AddLeadModal = ({ onLeadAdded, onClose }) => {
           onSubmit={onSubmit}
           className="grid grid-cols-1 md:grid-cols-2 gap-5 p-6 pt-0"
         >
-          {/* Section: Basic Info */}
           <div className="col-span-full">
             <h3 className="text-lg font-medium text-gray-700 mb-2">
               Basic Info
@@ -110,7 +112,6 @@ const AddLeadModal = ({ onLeadAdded, onClose }) => {
             />
           </div>
 
-          {/* Section: Contact Info */}
           <div className="col-span-full">
             <h3 className="text-lg font-medium text-gray-700 mb-2">
               Contact Info
@@ -126,7 +127,6 @@ const AddLeadModal = ({ onLeadAdded, onClose }) => {
               placeholder="Email"
               className="w-full outline-none"
               disabled={submitting}
-              required
             />
           </div>
           <div className="flex items-center border border-gray-300 rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
@@ -194,15 +194,23 @@ const AddLeadModal = ({ onLeadAdded, onClose }) => {
           </div>
           <div className="flex items-center border border-gray-300 rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
             <FiCalendar className="text-gray-400 mr-2" />
-            <input
-              type="datetime-local"
-              name="meetingDateAndTime"
+            <DateTimePicker
+              onChange={(date) =>
+                setLeadData((prev) => ({
+                  ...prev,
+                  meetingDateAndTime: date,
+                }))
+              }
               value={leadData.meetingDateAndTime}
-              onChange={onChange}
-              className="w-full outline-none"
-              disabled={submitting}
+              className="flex-1"
+              calendarClassName="rounded-lg shadow-lg"
+              clearIcon={null}
+              disableClock
+              format="dd MMM yyyy, h:mm a"
+              minDate={new Date()}
             />
           </div>
+
           <div className="flex items-center border border-gray-300 rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition">
             <FiGlobe className="text-gray-400 mr-2" />
             <select
@@ -267,7 +275,7 @@ const AddLeadModal = ({ onLeadAdded, onClose }) => {
               Key Notes
             </h3>
           </div>
-          <div className="flex items-start border rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition col-span-full">
+          <div className="flex items-start border border-gray-300 rounded-lg p-2 hover:border-blue-400 focus-within:border-blue-500 transition col-span-full">
             <FiEdit3 className="text-gray-400 mr-2 mt-1" />
             <textarea
               name="notesByKarUser"

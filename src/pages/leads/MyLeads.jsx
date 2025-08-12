@@ -145,7 +145,6 @@ const MyLeads = () => {
 
   return (
     <div className="p-4">
-      {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">My Leads</h2>
         {role === "karachi-agent" && (

@@ -1,17 +1,20 @@
-import { FaTachometerAlt, FaUsers, FaSignOutAlt, FaUserCog } from "react-icons/fa";
+import { FaTachometerAlt, FaUsers, FaSignOutAlt, FaUserCog, FaBell } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import NotificationBell from "./NotificationBell";
 
 const sidebarLinks = {
   admin: [
     { label: "Dashboard", path: "/admin/dashboard", icon: <FaTachometerAlt /> },
     { label: "Leads", path: "/admin/leads", icon: <FaUsers /> },
-    { label: "Manage Agents", path: "/admin/agents", icon: <FaUserCog />}, 
+    { label: "Manage Agents", path: "/admin/agents", icon: <FaUserCog />},
+    { label: "Notifications", path: "/admin/notifications", icon: <FaBell /> },
   ],
   agent: [
     { label: "Dashboard", path: "/agent/dashboard", icon: <FaTachometerAlt /> },
     { label: "Leads", path: "/agent/leads", icon: <FaUsers /> },
+    { label: "Notifications", path: "/agent/notifications", icon: <FaBell /> },
   ],
 };
 
@@ -52,6 +55,13 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
             alt="Leaders Tax Collection"
             className="w-40 mx-auto"
           />
+
+          {/* Notification Bell */}
+          <div className="flex justify-center mt-4">
+            <div className="bg-white/10 rounded-lg p-1">
+              <NotificationBell />
+            </div>
+          </div>
         </div>
 
         <nav className="mt-4 flex flex-col gap-1 px-4">

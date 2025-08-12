@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { FiBell, FiX, FiEye, FiExternalLink } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 import { useNotifications } from '../context/NotificationContext';
+import { FaBell } from 'react-icons/fa';
 
 const NotificationBell = () => {
   const navigate = useNavigate();
@@ -15,7 +16,6 @@ const NotificationBell = () => {
     fetchNotifications
   } = useNotifications();
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -27,10 +27,9 @@ const NotificationBell = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Fetch notifications when dropdown opens
   useEffect(() => {
     if (isOpen) {
-      fetchNotifications(1, 5); // Get latest 5 notifications
+      fetchNotifications(1, 5);
     }
   }, [isOpen, fetchNotifications]);
 
@@ -42,7 +41,7 @@ const NotificationBell = () => {
 
     setIsOpen(false);
 
-    // Navigate to action URL if available
+    // Navigate to a0ction URL if available
     if (notification.actionUrl) {
       navigate(notification.actionUrl);
     }
@@ -69,9 +68,9 @@ const NotificationBell = () => {
       {/* Notification Bell Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+        className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
       >
-        <FiBell size={20} />
+        <FaBell size={20} />
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
             {unreadCount > 9 ? '9+' : unreadCount}
@@ -87,7 +86,7 @@ const NotificationBell = () => {
             <h3 className="font-semibold text-gray-900">Notifications</h3>
             <button
               onClick={() => setIsOpen(false)}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-gray-400 hover:text-gray-600 cursor-pointer"
             >
               <FiX size={18} />
             </button>

@@ -5,12 +5,13 @@ import ProfileModal from "./ProfileModal";
 import { jwtDecode } from "jwt-decode";
 import api from "../utils/api";
 import { useLocation, useNavigate } from "react-router-dom";
+import NotificationBell from "./NotificationBell";
 
 const Navbar = ({ isOpen, setIsOpen }) => {
   const [user, setUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const { pathname } = useLocation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -50,10 +51,12 @@ const Navbar = ({ isOpen, setIsOpen }) => {
         </div>
       </div>
       <div className="flex items-center gap-6">
-        <FaBell
+        {/* <FaBell
           className="text-xl text-gray-600 cursor-pointer"
           onClick={() => navigate(`/${user.role}/notifications`)}
-        />
+        /> */}
+        <NotificationBell />
+
         <FaUserCircle
           className="text-2xl text-gray-600 cursor-pointer"
           onClick={() => setShowModal(true)}

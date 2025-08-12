@@ -8,7 +8,7 @@ import {
   FiTrash2,
   FiRefreshCw,
   FiEye,
-  FiExternalLink
+  FiExternalLink,
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/Loading";
@@ -23,11 +23,11 @@ const iconMap = {
 };
 
 const typeColorMap = {
-  lead_created: 'info',
-  lead_assigned: 'success',
-  lead_status_changed: 'warning',
-  follow_up_reminder: 'warning',
-  system_notification: 'info'
+  lead_created: "info",
+  lead_assigned: "success",
+  lead_status_changed: "warning",
+  follow_up_reminder: "warning",
+  system_notification: "info",
 };
 
 const Notifications = () => {
@@ -39,15 +39,11 @@ const Notifications = () => {
     fetchNotifications,
     markAsRead,
     markAllAsRead,
-    deleteNotification
+    deleteNotification,
   } = useNotifications();
 
   const [markingAll, setMarkingAll] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
 
   const handleRefresh = async () => {
     setRefreshing(true);
@@ -74,20 +70,25 @@ const Notifications = () => {
   };
 
   const getNotificationIcon = (notification) => {
-    const category = notification.category || typeColorMap[notification.type] || 'info';
+    const category =
+      notification.category || typeColorMap[notification.type] || "info";
     return iconMap[category] || iconMap.info;
   };
 
   const getNotificationBadge = (notification) => {
     const priorityColors = {
-      low: 'bg-gray-100 text-gray-600',
-      medium: 'bg-blue-100 text-blue-600',
-      high: 'bg-orange-100 text-orange-600',
-      urgent: 'bg-red-100 text-red-600'
+      low: "bg-gray-100 text-gray-600",
+      medium: "bg-blue-100 text-blue-600",
+      high: "bg-orange-100 text-orange-600",
+      urgent: "bg-red-100 text-red-600",
     };
 
     return priorityColors[notification.priority] || priorityColors.medium;
   };
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
 
   if (loading) return <Loading />;
 
@@ -109,9 +110,9 @@ const Notifications = () => {
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="flex items-center gap-2 px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition disabled:opacity-50"
+            className="flex items-center gap-2 px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition disabled:opacity-50 cursor-pointer"
           >
-            <FiRefreshCw className={refreshing ? 'animate-spin' : ''} />
+            <FiRefreshCw className={refreshing ? "animate-spin" : ""} />
             Refresh
           </button>
 
@@ -119,7 +120,7 @@ const Notifications = () => {
             <button
               onClick={handleMarkAllRead}
               disabled={markingAll}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition disabled:opacity-50 cursor-pointer"
             >
               <FiCheckCircle />
               {markingAll ? "Marking..." : "Mark all read"}
@@ -154,7 +155,11 @@ const Notifications = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1">
-                      <h3 className={`text-sm font-medium ${!notification.read ? 'text-gray-900' : 'text-gray-700'}`}>
+                      <h3
+                        className={`text-sm font-medium ${
+                          !notification.read ? "text-gray-900" : "text-gray-700"
+                        }`}
+                      >
                         {notification.title}
                       </h3>
                       <p className="text-sm text-gray-600 mt-1">
@@ -169,9 +174,13 @@ const Notifications = () => {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span className={`text-xs px-2 py-1 rounded-full ${getNotificationBadge(notification)}`}>
+                      {/* <span
+                        className={`text-xs px-2 py-1 rounded-full ${getNotificationBadge(
+                          notification
+                        )}`}
+                      >
                         {notification.priority}
-                      </span>
+                      </span> */}
 
                       {notification.actionRequired && (
                         <FiExternalLink className="text-blue-500 w-4 h-4" />
@@ -181,7 +190,8 @@ const Notifications = () => {
 
                   <div className="flex items-center justify-between mt-3">
                     <span className="text-xs text-gray-400">
-                      {notification.timeAgo || new Date(notification.createdAt).toLocaleDateString()}
+                      {notification.timeAgo ||
+                        new Date(notification.createdAt).toLocaleDateString()}
                     </span>
 
                     <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -191,7 +201,7 @@ const Notifications = () => {
                             e.stopPropagation();
                             markAsRead(notification._id);
                           }}
-                          className="text-xs text-blue-600 hover:text-blue-800"
+                          className="text-xs text-blue-600 hover:text-blue-800 cursor-pointer"
                         >
                           <FiEye className="w-4 h-4" />
                         </button>
@@ -202,7 +212,7 @@ const Notifications = () => {
                           e.stopPropagation();
                           deleteNotification(notification._id);
                         }}
-                        className="text-xs text-red-600 hover:text-red-800"
+                        className="text-red-600 hover:text-red-800 cursor-pointer"
                       >
                         <FiTrash2 className="w-4 h-4" />
                       </button>

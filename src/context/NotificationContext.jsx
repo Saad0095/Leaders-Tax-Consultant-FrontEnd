@@ -1,13 +1,13 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import api from '../utils/api';
-import { toast } from 'react-toastify';
+import React, { createContext, useContext, useState, useEffect, useRef } from "react";
+import api from "../utils/api";
+import { toast } from "react-toastify";
 
 const NotificationContext = createContext();
 
 export const useNotifications = () => {
   const context = useContext(NotificationContext);
   if (!context) {
-    throw new Error('useNotifications must be used within a NotificationProvider');
+    throw new Error("useNotifications must be used within a NotificationProvider");
   }
   return context;
 };
@@ -16,6 +16,8 @@ export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const lastNotifIdRef = useRef(null);
+  const firstRunRef = useRef(true);
 
   // Fetch notifications
   const fetchNotifications = async (page = 1, limit = 20) => {
@@ -26,119 +28,115 @@ export const NotificationProvider = ({ children }) => {
       setUnreadCount(response.pagination?.unreadCount || 0);
       return response;
     } catch (error) {
-      console.error('Error fetching notifications:', error);
-      toast.error('Failed to load notifications');
+      console.error("Error fetching notifications:", error);
+      toast.error("Failed to load notifications");
       return null;
     } finally {
       setLoading(false);
     }
   };
 
-  // Fetch unread count only
   const fetchUnreadCount = async () => {
     try {
-      const response = await api.get('/api/notifications/unread-count');
+      const response = await api.get("/api/notifications/unread-count");
       setUnreadCount(response.unreadCount || 0);
     } catch (error) {
-      console.error('Error fetching unread count:', error);
+      console.error("Error fetching unread count:", error);
     }
   };
 
-  // Mark notification as read
   const markAsRead = async (notificationId) => {
     try {
       await api.post(`/api/notifications/${notificationId}/mark-read`);
-      
-      // Update local state
-      setNotifications(prev => 
-        prev.map(notification => 
-          notification._id === notificationId 
-            ? { ...notification, read: true, readAt: new Date() }
-            : notification
+      setNotifications((prev) =>
+        prev.map((n) =>
+          n._id === notificationId ? { ...n, read: true, readAt: new Date() } : n
         )
       );
-      
-      // Update unread count
-      setUnreadCount(prev => Math.max(0, prev - 1));
-      
+      setUnreadCount((prev) => Math.max(0, prev - 1));
       return true;
     } catch (error) {
-      console.error('Error marking notification as read:', error);
-      toast.error('Failed to mark notification as read');
+      console.error("Error marking notification as read:", error);
+      toast.error("Failed to mark notification as read");
       return false;
     }
   };
 
-  // Mark all notifications as read
   const markAllAsRead = async () => {
     try {
-      await api.post('/api/notifications/mark-all-read');
-      
-      // Update local state
-      setNotifications(prev => 
-        prev.map(notification => ({ 
-          ...notification, 
-          read: true, 
-          readAt: new Date() 
-        }))
-      );
-      
+      await api.post("/api/notifications/mark-all-read");
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true, readAt: new Date() })));
       setUnreadCount(0);
-      toast.success('All notifications marked as read');
+      toast.success("All notifications marked as read");
       return true;
     } catch (error) {
-      console.error('Error marking all notifications as read:', error);
-      toast.error('Failed to mark all notifications as read');
+      console.error("Error marking all notifications as read:", error);
+      toast.error("Failed to mark all notifications as read");
       return false;
     }
   };
 
-  // Delete notification
   const deleteNotification = async (notificationId) => {
     try {
+      setLoading(true);
       await api.delete(`/api/notifications/${notificationId}`);
-      
-      // Update local state
-      const deletedNotification = notifications.find(n => n._id === notificationId);
-      setNotifications(prev => prev.filter(n => n._id !== notificationId));
-      
-      // Update unread count if deleted notification was unread
+      const deletedNotification = notifications.find((n) => n._id === notificationId);
+      setNotifications((prev) => prev.filter((n) => n._id !== notificationId));
       if (deletedNotification && !deletedNotification.read) {
-        setUnreadCount(prev => Math.max(0, prev - 1));
+        setUnreadCount((prev) => Math.max(0, prev - 1));
       }
-      
-      toast.success('Notification deleted');
+      toast.success("Notification deleted");
       return true;
     } catch (error) {
-      console.error('Error deleting notification:', error);
-      toast.error('Failed to delete notification');
+      console.error("Error deleting notification:", error);
+      toast.error("Failed to delete notification");
       return false;
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Add new notification (for real-time updates)
   const addNotification = (notification) => {
-    setNotifications(prev => [notification, ...prev]);
+    setNotifications((prev) => [notification, ...prev]);
     if (!notification.read) {
-      setUnreadCount(prev => prev + 1);
+      setUnreadCount((prev) => prev + 1);
     }
+    const audio = new Audio("/notification.mp3");
+    audio.play().catch((err) => console.warn("Sound play blocked by browser:", err));
   };
 
-  // Auto-refresh unread count periodically
+  // Poll for new notifications every 30s
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (!token) return;
 
-    // Initial fetch
-    fetchUnreadCount();
+    const poll = async () => {
+      const response = await fetchNotifications();
+      if (!response) return;
 
-    // Set up periodic refresh every 30 seconds
-    const interval = setInterval(() => {
-      fetchUnreadCount();
-    }, 30000);
+      const latestList = response.notifications || [];
 
+      // Skip sound on first run
+      if (!firstRunRef.current && latestList.length > 0) {
+        if (latestList[0]._id !== lastNotifIdRef.current) {
+          const audio = new Audio("/notification.mp3");
+          audio.play().catch((err) => console.warn("Sound play blocked:", err));
+        }
+      }
+
+      if (latestList.length > 0) {
+        lastNotifIdRef.current = latestList[0]._id;
+      }
+
+      firstRunRef.current = false;
+    };
+
+    // Run immediately
+    poll();
+
+    const interval = setInterval(poll, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, []); // ✅ empty deps — no warning
 
   const value = {
     notifications,
@@ -149,12 +147,8 @@ export const NotificationProvider = ({ children }) => {
     markAsRead,
     markAllAsRead,
     deleteNotification,
-    addNotification
+    addNotification,
   };
 
-  return (
-    <NotificationContext.Provider value={value}>
-      {children}
-    </NotificationContext.Provider>
-  );
+  return <NotificationContext.Provider value={value}>{children}</NotificationContext.Provider>;
 };

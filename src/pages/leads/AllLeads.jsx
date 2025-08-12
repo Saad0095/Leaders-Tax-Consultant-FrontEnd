@@ -7,24 +7,10 @@ import LeadDetailModal from "../../components/LeadDetailModal";
 import Pagination from "../../components/Pagination";
 import LeadsFilter from "../../components/LeadsFilter";
 import { toast, ToastContainer } from "react-toastify";
-import {
-  FiBriefcase,
-  FiUser,
-  FiCalendar,
-  FiGlobe,
-  FiEye,
-  FiEdit2,
-  FiTrash,
-} from "react-icons/fi";
+import { FiCalendar, FiGlobe, FiEye, FiEdit2, FiTrash } from "react-icons/fi";
 import { formatDateTime } from "../../utils/formatDateTime";
-
-const statusColors = {
-  "Meeting Fixed": "bg-blue-100 text-blue-700",
-  "Meeting Done": "bg-green-100 text-green-700",
-  Postponed: "bg-yellow-100 text-yellow-700",
-  Cancelled: "bg-red-100 text-red-700",
-  Closed: "bg-gray-200 text-gray-700",
-};
+import { getStatusStyles } from "../../utils/getStatusStyles";
+import { FaBuilding, FaUser } from "react-icons/fa";
 
 const AllLeads = () => {
   const [leads, setLeads] = useState([]);
@@ -36,7 +22,6 @@ const AllLeads = () => {
   const [assigningLeadId, setAssigningLeadId] = useState(null);
   const [assignedLeads, setAssignedLeads] = useState({});
 
-  // Pagination state
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -46,7 +31,6 @@ const AllLeads = () => {
     limit: 10,
   });
 
-  // Filter state
   const [filters, setFilters] = useState({
     search: "",
     status: "",
@@ -192,18 +176,20 @@ const AllLeads = () => {
 
   const handleAssignToDubaiAgent = async (leadId, userId) => {
     if (!userId) return;
+    setLoading(true);
     setAssigningLeadId(leadId);
     try {
       await api.post("/api/leads/assign", { leadId, userId });
       setAssignedLeads((prev) => ({ ...prev, [leadId]: userId }));
-      toast.success("Lead assigned to Dubai agent");
+      await fetchLeads();
       setTimeout(() => {
-        fetchLeads();
-      }, 1000);
+        toast.success("Lead assigned to Dubai agent");
+      }, 500);
     } catch {
       toast.error("Failed to assign lead");
     } finally {
       setAssigningLeadId(null);
+      setLoading(false);
     }
   };
 
@@ -227,7 +213,7 @@ const AllLeads = () => {
     <div className="p-6">
       <ToastContainer />
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">📋 All Leads</h1>
+        <h1 className="text-3xl font-bold">📋 All Leads</h1>
         {/* <button
           className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
           onClick={() => setAddingLead(true)}
@@ -258,26 +244,26 @@ const AllLeads = () => {
                   key={lead._id}
                   className="bg-white rounded-xl shadow hover:shadow-lg transition transform hover:-translate-y-1 p-5"
                 >
-                  <div className="flex items-center mb-3">
-                    <FiBriefcase className="text-blue-500 mr-2" />
-                    <h2 className="font-semibold">{lead.companyName || "-"}</h2>
+                  <div className="flex justify-between items-start mb-3">
+                    <h3 className="text-lg font-semibold flex items-center gap-2 text-gray-800">
+                      <FaBuilding className="text-blue-500" />{" "}
+                      {lead.companyName}
+                    </h3>
+                    <span
+                      className={`px-3 py-1 text-xs font-medium border rounded-full ${getStatusStyles(
+                        lead.status
+                      )}`}
+                    >
+                      {lead.status || "Unknown"}
+                    </span>
                   </div>
                   <div className="flex items-center mb-3">
-                    <FiUser className="text-gray-500 mr-2" />
+                    <FaUser className="text-gray-500 mr-2" />
                     <span>{lead.customerName || "-"}</span>
                   </div>
 
-                  <span
-                    className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mb-3 ${
-                      statusColors[lead.status] || "bg-gray-100 text-gray-600"
-                    }`}
-                  >
-                    {lead.status}
-                  </span>
-
                   <div className="flex items-center mb-3">
                     <FiCalendar className="text-gray-500 mr-2" />
-                    {/* <span>{lead.meetingDateAndTime || "-"}</span> */}
                     <span>{formatDateTime(lead.meetingDateAndTime)}</span>
                   </div>
 
@@ -295,7 +281,7 @@ const AllLeads = () => {
                     </label>
                     <select
                       id={`assign-agent-${lead._id}`}
-                      className={`w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300
+                      className={`w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-300
                     ${
                       isAssigned
                         ? "bg-gray-100 cursor-not-allowed text-gray-600"
@@ -328,21 +314,21 @@ const AllLeads = () => {
                       <FiEye size={18} />
                     </button>
 
-                      <button
-                        className="text-yellow-500 hover:text-yellow-700 cursor-pointer"
-                        onClick={() => openEditLead(lead._id)}
-                        title="Edit Lead"
-                      >
-                        <FiEdit2 size={18} />
-                      </button>
+                    <button
+                      className="text-yellow-500 hover:text-yellow-700 cursor-pointer"
+                      onClick={() => openEditLead(lead._id)}
+                      title="Edit Lead"
+                    >
+                      <FiEdit2 size={18} />
+                    </button>
 
-                      <button
-                        className="text-red-500 hover:text-red-700 cursor-pointer"
-                        onClick={() => handleDelete(lead._id)}
-                        title="Delete Lead"
-                      >
-                        <FiTrash size={18} />
-                      </button>
+                    <button
+                      className="text-red-500 hover:text-red-700 cursor-pointer"
+                      onClick={() => handleDelete(lead._id)}
+                      title="Delete Lead"
+                    >
+                      <FiTrash size={18} />
+                    </button>
                   </div>
                 </div>
               );

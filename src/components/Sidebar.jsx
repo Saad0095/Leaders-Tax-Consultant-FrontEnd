@@ -3,6 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import NotificationBell from "./NotificationBell";
+import Logo from "../assets/Leaders-logo.webp"
 
 const sidebarLinks = {
   admin: [
@@ -51,17 +52,16 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
       >
         <div className="p-6">
           <img
-            src="https://leaderstaxconsultant.com/wp-content/uploads/2025/08/Leaders-logo-final-white-1.webp"
+            src={Logo}
             alt="Leaders Tax Collection"
             className="w-40 mx-auto"
           />
 
-          {/* Notification Bell */}
-          <div className="flex justify-center mt-4">
+          {/* <div className="flex justify-center mt-4">
             <div className="bg-white/10 rounded-lg p-1">
               <NotificationBell />
             </div>
-          </div>
+          </div> */}
         </div>
 
         <nav className="mt-4 flex flex-col gap-1 px-4">

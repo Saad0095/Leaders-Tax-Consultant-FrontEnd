@@ -6,6 +6,7 @@ import ProfileModal from "../../components/ProfileModal";
 import EditUserModal from "../../components/EditUserModal";
 import AddUserModal from "../../components/AddUserModal";
 import Loading from "../../components/Loading";
+import { FiUser } from "react-icons/fi";
 
 const AgentManagement = () => {
   const [users, setUsers] = useState([]);
@@ -66,7 +67,7 @@ const AgentManagement = () => {
       <ToastContainer />
 
       <div className="flex flex-col lg:flex-row justify-between items-center mb-8 gap-4">
-        <h1 className="text-3xl font-bold text-gray-800">User Management</h1>
+        <h1 className="text-3xl font-bold flex items-center gap-3"><FiUser  size={28}/> User Management</h1>
         <div className="flex gap-2 w-full lg:w-auto">
           <div className="relative flex-1 lg:flex-none">
             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -119,19 +120,19 @@ const AgentManagement = () => {
                         <div className="flex gap-2 mt-3">
                           <button
                             onClick={() => setSelectedUser(user)}
-                            className="flex-1 text-sm px-3 py-1 rounded bg-white border border-blue-500 text-blue-500 transform transition-all  duration-200 hover:shadow hover:shadow-gray-300 hover:-translate-y-1 hover:bg-blue-500 hover:text-white cursor-pointer "
+                            className="flex-1 text-sm px-3 py-1 rounded bg-white border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white cursor-pointer "
                           >
                             View
                           </button>
                           <button
                             onClick={() => setEditUser(user)}
-                            className="flex-1 text-sm px-3 py-1 rounded bg-white border border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white cursor-pointer transform transition-all  duration-200 hover:shadow hover:shadow-gray-300 hover:-translate-y-1"
+                            className="flex-1 text-sm px-3 py-1 rounded bg-white border border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white cursor-pointer"
                           >
                             Edit
                           </button>
                           <button
                             onClick={() => handleDelete(user._id)}
-                            className="flex-1 text-sm px-3 py-1 rounded bg-white border border-red-500 text-red-500 hover:bg-red-600 hover:text-white cursor-pointer transform transition-all  duration-200 hover:shadow hover:shadow-gray-300 hover:-translate-y-1"
+                            className="flex-1 text-sm px-3 py-1 rounded bg-white border border-red-500 text-red-500 hover:bg-red-600 hover:text-white cursor-pointer"
                           >
                             Delete
                           </button>

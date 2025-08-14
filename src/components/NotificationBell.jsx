@@ -18,7 +18,11 @@ const NotificationBell = () => {
     const token = localStorage.getItem("token");
     if (token) {
       const decoded = jwtDecode(token);
-      setRole(decoded?.role);
+      if (decoded?.role !== "admin") {
+        setRole("agent");
+      } else {
+        setRole("admin");
+      }
     }
   }, [navigate]);
 

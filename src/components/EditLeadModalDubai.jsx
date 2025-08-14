@@ -2,14 +2,17 @@ import { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { FiFile } from "react-icons/fi";
 import api from "../utils/api";
+import { useNotifications } from "../context/NotificationContext";
 
 const EditLeadModalDubai = ({ lead, onClose, onUpdated }) => {
+  const { forceNotificationCheck } = useNotifications();
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(lead.status || "");
   const [notes, setNotes] = useState(lead.notesByDubAgent || "");
   const [revenue, setRevenue] = useState(lead.revenueAmount || "");
   const [files, setFiles] = useState([]);
   const [existingFiles, setExistingFiles] = useState([]);
+  const [followUpReminderDays, setFollowUpReminderDays] = useState(lead.followUpReminderDays || 3);
 
   const statusOptions = [
     "Meeting Fixed",
@@ -44,7 +47,11 @@ const EditLeadModalDubai = ({ lead, onClose, onUpdated }) => {
     setLoading(true);
     try {
       if (status !== lead.status) {
-        await api.patch(`/api/leads/${lead._id}/status`, { status });
+        const statusData = { status };
+        if (status === "In Follow-up") {
+          statusData.followUpReminderDays = followUpReminderDays;
+        }
+        await api.patch(`/api/leads/${lead._id}/status`, statusData);
       }
       if (notes !== lead.notesByDubAgent && notes.trim() !== "") {
         await api.put(`/api/leads/${lead._id}/notes`, {
@@ -67,6 +74,12 @@ const EditLeadModalDubai = ({ lead, onClose, onUpdated }) => {
       }
       setLoading(false);
       toast.success("Lead Updated Successfully!");
+
+      // Force notification check after lead update
+      setTimeout(() => {
+        forceNotificationCheck();
+      }, 1000);
+
       setTimeout(() => {
         onUpdated();
         onClose();
@@ -111,6 +124,27 @@ const EditLeadModalDubai = ({ lead, onClose, onUpdated }) => {
               ))}
             </select>
           </div>
+
+          {/* Follow-up Reminder Days (only show when status is "In Follow-up") */}
+          {status === "In Follow-up" && (
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Follow-up Reminder (Days)
+              </label>
+              <input
+                type="number"
+                min="1"
+                max="30"
+                value={followUpReminderDays}
+                onChange={(e) => setFollowUpReminderDays(Number(e.target.value))}
+                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-50"
+                placeholder="Enter days (1-30)"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                You'll receive a reminder after this many days (default: 3 days)
+              </p>
+            </div>
+          )}
 
           {/* Notes */}
           <div>

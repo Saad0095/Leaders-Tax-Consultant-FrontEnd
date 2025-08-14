@@ -249,13 +249,20 @@ const AllLeads = () => {
                       <FaBuilding className="text-blue-500" />{" "}
                       {lead.companyName}
                     </h3>
-                    <span
-                      className={`px-3 py-1 text-xs font-medium border rounded-full ${getStatusStyles(
-                        lead.status
-                      )}`}
-                    >
-                      {lead.status || "Unknown"}
-                    </span>
+                    <div className="flex flex-col items-end gap-1">
+                      <span
+                        className={`px-3 py-1 text-xs font-medium border rounded-full ${getStatusStyles(
+                          lead.status
+                        )}`}
+                      >
+                        {lead.status || "Unknown"}
+                      </span>
+                      {lead.status === "In Follow-up" && (
+                        <span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded">
+                          {lead.followUpReminderDays || 3} days
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <div className="flex items-center mb-3">
                     <FaUser className="text-gray-500 mr-2" />

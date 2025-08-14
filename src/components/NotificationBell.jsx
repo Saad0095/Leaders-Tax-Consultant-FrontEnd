@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { FiBell, FiX, FiEye, FiExternalLink } from "react-icons/fi";
+import { FiBell, FiX, FiExternalLink, FiRefreshCw } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useNotifications } from "../context/NotificationContext";
 import { FaBell } from "react-icons/fa";
@@ -8,9 +8,12 @@ import { jwtDecode } from "jwt-decode";
 const NotificationBell = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [hasNewNotification, setHasNewNotification] = useState(false);
   const dropdownRef = useRef(null);
+  const clickTimeoutRef = useRef(null);
+  const prevUnreadCountRef = useRef(0); // Initialize with 0 instead of unreadCount
 
-  const { notifications, unreadCount, markAsRead, fetchNotifications } =
+  const { notifications, unreadCount, loading, markAsRead, refreshNotifications, fetchUnreadCount, fetchNotifications, forceNotificationCheck } =
     useNotifications();
 
   const [role, setRole] = useState(null);
@@ -24,8 +27,11 @@ const NotificationBell = () => {
       } else {
         setRole("admin");
       }
+
+      // Fetch unread count immediately when component mounts
+      fetchUnreadCount();
     }
-  }, [navigate]);
+  }, [navigate, fetchUnreadCount]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -38,11 +44,41 @@ const NotificationBell = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Fetch notifications when dropdown opens
   useEffect(() => {
     if (isOpen) {
-      fetchNotifications(1, 5);
+      // If we have no notifications, fetch them
+      if (notifications.length === 0) {
+        fetchNotifications(1, 5);
+      } else {
+        // If we have notifications, just refresh them
+        refreshNotifications();
+      }
     }
-  }, [isOpen, fetchNotifications]);
+  }, [isOpen, notifications.length, fetchNotifications, refreshNotifications]);
+
+  // Initialize prevUnreadCountRef on first render
+  useEffect(() => {
+    if (prevUnreadCountRef.current === 0 && unreadCount > 0) {
+      prevUnreadCountRef.current = unreadCount; // Set initial value without triggering animation
+    }
+  }, [unreadCount]);
+
+  // Detect new notifications and trigger animation
+  useEffect(() => {
+    if (unreadCount > prevUnreadCountRef.current && prevUnreadCountRef.current > 0) {
+      setHasNewNotification(true);
+      console.log('New notification detected! Count:', unreadCount);
+
+      // Remove animation after 3 seconds
+      setTimeout(() => {
+        setHasNewNotification(false);
+      }, 3000);
+    }
+    if (unreadCount !== prevUnreadCountRef.current) {
+      prevUnreadCountRef.current = unreadCount;
+    }
+  }, [unreadCount]);
 
   const handleNotificationClick = async (notification) => {
     // Mark as read if not already read
@@ -76,18 +112,36 @@ const NotificationBell = () => {
       : message;
   };
 
+  // Debounced bell click to prevent multiple rapid API calls
+  const handleBellClick = () => {
+    if (clickTimeoutRef.current) return; // Prevent rapid clicks
+
+
+    setIsOpen(!isOpen);
+
+    // Add small delay to prevent rapid clicking
+    clickTimeoutRef.current = setTimeout(() => {
+      clickTimeoutRef.current = null;
+    }, 300);
+  };
+
   return (
     <div className="relative" ref={dropdownRef}>
       {/* Notification Bell Button */}
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
+        onClick={handleBellClick}
+        className={`relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer ${
+          loading ? 'opacity-70' : ''
+        } ${hasNewNotification ? 'animate-bounce' : ''}`}
       >
-        <FaBell size={20} />
+        <FaBell size={20} className={hasNewNotification ? 'text-blue-600' : ''} />
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
+        )}
+        {loading && (
+          <span className="absolute -bottom-1 -right-1 w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
         )}
       </button>
 
@@ -97,17 +151,35 @@ const NotificationBell = () => {
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <h3 className="font-semibold text-gray-900">Notifications</h3>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="text-gray-400 hover:text-gray-600 cursor-pointer"
-            >
-              <FiX size={18} />
-            </button>
+            <div className="flex items-center gap-2">
+              {/* Manual refresh button */}
+              <button
+                onClick={() => {
+                  console.log('Manual refresh clicked');
+                  forceNotificationCheck();
+                }}
+                className="text-gray-400 hover:text-gray-600 cursor-pointer p-1 rounded hover:bg-gray-100"
+                title="Refresh notifications"
+              >
+                <FiRefreshCw size={16} />
+              </button>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="text-gray-400 hover:text-gray-600 cursor-pointer"
+              >
+                <FiX size={18} />
+              </button>
+            </div>
           </div>
 
           {/* Notifications List */}
           <div className="max-h-96 overflow-y-auto">
-            {notifications.length === 0 ? (
+            {loading ? (
+              <div className="p-6 text-center text-gray-500">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+                <p>Loading notifications...</p>
+              </div>
+            ) : notifications.length === 0 ? (
               <div className="p-6 text-center text-gray-500">
                 <FiBell size={32} className="mx-auto mb-2 opacity-50" />
                 <p>No notifications</p>

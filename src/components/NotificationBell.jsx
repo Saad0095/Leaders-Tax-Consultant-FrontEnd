@@ -149,7 +149,7 @@ const NotificationBell = () => {
           </div>
 
           {/* Footer */}
-          {notifications.length > 0 && (
+          {/* {notifications.length > 0 && (
             <div className="p-3 border-t border-gray-200">
               <button
                 onClick={() => {
@@ -161,7 +161,7 @@ const NotificationBell = () => {
                 View all notifications
               </button>
             </div>
-          )}
+          )} */}
         </div>
       )}
     </div>

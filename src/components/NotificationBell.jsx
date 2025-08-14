@@ -171,7 +171,7 @@ const NotificationBell = () => {
                   setIsOpen(false);
                   navigate(`/${role}/notifications`);
                 }}
-                className="w-full text-center text-sm text-blue-600 hover:text-blue-800 font-medium"
+                className="w-full text-center text-sm text-blue-600 hover:text-blue-800 font-medium cursor-pointer"
               >
                 View all notifications
               </button>

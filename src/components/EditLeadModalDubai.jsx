@@ -12,7 +12,7 @@ const EditLeadModalDubai = ({ lead, onClose, onUpdated }) => {
   const [revenue, setRevenue] = useState(lead.revenueAmount || "");
   const [files, setFiles] = useState([]);
   const [existingFiles, setExistingFiles] = useState([]);
-  const [followUpReminderDays, setFollowUpReminderDays] = useState(lead.followUpReminderDays || 2); // TESTING: 2 minutes instead of 3 days
+  const [followUpReminderDays, setFollowUpReminderDays] = useState(lead.followUpReminderDays || 3);
 
   const statusOptions = [
     "Meeting Fixed",
@@ -75,7 +75,7 @@ const EditLeadModalDubai = ({ lead, onClose, onUpdated }) => {
       setLoading(false);
       toast.success("Lead Updated Successfully!");
 
-      // TESTING: Force notification check after lead update
+      // Force notification check after lead update
       setTimeout(() => {
         forceNotificationCheck();
       }, 1000);
@@ -129,7 +129,7 @@ const EditLeadModalDubai = ({ lead, onClose, onUpdated }) => {
           {status === "In Follow-up" && (
             <div>
               <label className="block text-sm font-medium mb-1">
-                Follow-up Reminder (Minutes) {/* TESTING: Minutes instead of Days */}
+                Follow-up Reminder (Days)
               </label>
               <input
                 type="number"
@@ -138,10 +138,10 @@ const EditLeadModalDubai = ({ lead, onClose, onUpdated }) => {
                 value={followUpReminderDays}
                 onChange={(e) => setFollowUpReminderDays(Number(e.target.value))}
                 className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-50"
-                placeholder="Enter minutes (1-30)" /* TESTING: Minutes instead of days */
+                placeholder="Enter days (1-30)"
               />
               <p className="text-xs text-gray-500 mt-1">
-                You'll receive a reminder after this many minutes (default: 2 minutes) {/* TESTING */}
+                You'll receive a reminder after this many days (default: 3 days)
               </p>
             </div>
           )}

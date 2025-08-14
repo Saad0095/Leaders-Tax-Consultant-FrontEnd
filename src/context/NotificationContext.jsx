@@ -178,8 +178,8 @@ export const NotificationProvider = ({ children }) => {
     // Run immediately on mount for instant notification count
     poll();
 
-    // TESTING: Poll every 10 seconds instead of 30 for faster updates
-    const interval = setInterval(poll, 10000);
+    // Then continue polling every 30 seconds
+    const interval = setInterval(poll, 30000);
     return () => clearInterval(interval);
   }, []); // ✅ empty deps — no warning
 

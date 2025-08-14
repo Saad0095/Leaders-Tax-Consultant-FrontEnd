@@ -183,7 +183,7 @@ const MyLeads = () => {
                     </span>
                     {lead.status === "In Follow-up" && (
                       <span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded">
-                        {lead.followUpReminderDays || 2} min {/* TESTING: minutes instead of days */}
+                        {lead.followUpReminderDays || 3} days
                       </span>
                     )}
                   </div>

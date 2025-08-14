@@ -152,7 +152,7 @@ const NotificationBell = () => {
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <h3 className="font-semibold text-gray-900">Notifications</h3>
             <div className="flex items-center gap-2">
-              {/* TESTING: Manual refresh button */}
+              {/* Manual refresh button */}
               <button
                 onClick={() => {
                   console.log('Manual refresh clicked');

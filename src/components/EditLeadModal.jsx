@@ -299,16 +299,13 @@ const EditLeadModal = ({ lead, onClose, onUpdate }) => {
                 {files.map((file, i) => (
                   <li key={i}>
                     <a
-                      href={`${import.meta.env.VITE_BASE_URL}/${file.replace(
-                        /\\/g,
-                        "/"
-                      )}`}
+                      href={file}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center space-x-2 text-blue-600 hover:underline"
                     >
                       <FiFile />
-                      <span>{file.split(/[\\/]/).pop()}</span>
+                      <span>Invoice</span>
                     </a>
                   </li>
                 ))}
@@ -362,7 +359,7 @@ const EditLeadModal = ({ lead, onClose, onUpdate }) => {
               htmlFor="notesByDubAgent"
               className="block mb-1 font-medium text-gray-700"
             >
-              Notes By Duabi Agent:
+              Notes By Dubai Agent:
             </label>
             <textarea
               id="notes"

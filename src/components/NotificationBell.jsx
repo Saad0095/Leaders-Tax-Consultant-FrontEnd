@@ -3,6 +3,7 @@ import { FiBell, FiX, FiEye, FiExternalLink } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useNotifications } from "../context/NotificationContext";
 import { FaBell } from "react-icons/fa";
+import { jwtDecode } from "jwt-decode";
 
 const NotificationBell = () => {
   const navigate = useNavigate();

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
 import api from "../utils/api";
 import { toast } from "react-toastify";
 
@@ -18,12 +18,14 @@ export const NotificationProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const lastNotifIdRef = useRef(null);
   const firstRunRef = useRef(true);
+  const isPollingRef = useRef(false); // Prevent multiple simultaneous polls
 
-  // Fetch notifications
-  const fetchNotifications = async (page = 1, limit = 20) => {
+  // Fetch notifications - wrapped in useCallback to prevent unnecessary re-renders
+  const fetchNotifications = useCallback(async (page = 1, limit = 20) => {
     try {
       setLoading(true);
       const response = await api.get(`/api/notifications?page=${page}&limit=${limit}`);
+
       setNotifications(response.notifications || []);
       setUnreadCount(response.pagination?.unreadCount || 0);
       return response;
@@ -34,16 +36,41 @@ export const NotificationProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []); // Empty dependency array since this function doesn't depend on any state
 
-  const fetchUnreadCount = async () => {
+  const fetchUnreadCount = useCallback(async () => {
     try {
       const response = await api.get("/api/notifications/unread-count");
       setUnreadCount(response.unreadCount || 0);
     } catch (error) {
       console.error("Error fetching unread count:", error);
     }
-  };
+  }, []);
+
+  // Lightweight refresh for dropdown - only updates existing notifications read status
+  const refreshNotifications = useCallback(async () => {
+    if (notifications.length === 0) return;
+
+    try {
+      const response = await api.get(`/api/notifications?page=1&limit=${notifications.length}`);
+      setNotifications(response.notifications || []);
+      setUnreadCount(response.pagination?.unreadCount || 0);
+    } catch (error) {
+      console.error("Error refreshing notifications:", error);
+    }
+  }, [notifications.length]);
+
+  // Force immediate notification check (for testing and after user actions)
+  const forceNotificationCheck = useCallback(async () => {
+    try {
+      const response = await fetchNotifications(1, 20);
+      if (response) {
+        console.log('Forced notification check completed');
+      }
+    } catch (error) {
+      console.error("Error in forced notification check:", error);
+    }
+  }, [fetchNotifications]);
 
   const markAsRead = async (notificationId) => {
     try {
@@ -105,36 +132,54 @@ export const NotificationProvider = ({ children }) => {
     audio.play().catch((err) => console.warn("Sound play blocked by browser:", err));
   };
 
-  // Poll for new notifications every 30s
+  // Immediate unread count fetch on mount (faster than full notification fetch)
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    // Quick unread count fetch for immediate UI feedback
+    fetchUnreadCount();
+  }, [fetchUnreadCount]);
+
+  // Initial fetch and polling for notifications
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
     const poll = async () => {
-      const response = await fetchNotifications();
-      if (!response) return;
+      // Prevent multiple simultaneous polls
+      if (isPollingRef.current) return;
 
-      const latestList = response.notifications || [];
+      isPollingRef.current = true;
+      try {
+        const response = await fetchNotifications();
+        if (!response) return;
 
-      // Skip sound on first run
-      if (!firstRunRef.current && latestList.length > 0) {
-        if (latestList[0]._id !== lastNotifIdRef.current) {
-          const audio = new Audio("/notification.mp3");
-          audio.play().catch((err) => console.warn("Sound play blocked:", err));
+        const latestList = response.notifications || [];
+
+        // Skip sound on first run
+        if (!firstRunRef.current && latestList.length > 0) {
+          if (latestList[0]._id !== lastNotifIdRef.current) {
+            const audio = new Audio("/notification.mp3");
+            audio.play().catch((err) => console.warn("Sound play blocked:", err));
+          }
         }
-      }
 
-      if (latestList.length > 0) {
-        lastNotifIdRef.current = latestList[0]._id;
-      }
+        if (latestList.length > 0) {
+          lastNotifIdRef.current = latestList[0]._id;
+        }
 
-      firstRunRef.current = false;
+        firstRunRef.current = false;
+      } finally {
+        isPollingRef.current = false;
+      }
     };
 
-    // Run immediately
+    // Run immediately on mount for instant notification count
     poll();
 
-    const interval = setInterval(poll, 30000);
+    // TESTING: Poll every 10 seconds instead of 30 for faster updates
+    const interval = setInterval(poll, 10000);
     return () => clearInterval(interval);
   }, []); // ✅ empty deps — no warning
 
@@ -144,6 +189,8 @@ export const NotificationProvider = ({ children }) => {
     loading,
     fetchNotifications,
     fetchUnreadCount,
+    refreshNotifications,
+    forceNotificationCheck,
     markAsRead,
     markAllAsRead,
     deleteNotification,

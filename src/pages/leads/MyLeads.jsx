@@ -173,13 +173,20 @@ const MyLeads = () => {
                   <h3 className="text-lg font-semibold flex items-center gap-2 text-gray-800">
                     <FaBuilding className="text-blue-500" /> {lead.companyName}
                   </h3>
-                  <span
-                    className={`px-3 py-1 text-xs font-medium border rounded-full ${getStatusStyles(
-                      lead.status
-                    )}`}
-                  >
-                    {lead.status || "Unknown"}
-                  </span>
+                  <div className="flex flex-col items-end gap-1">
+                    <span
+                      className={`px-3 py-1 text-xs font-medium border rounded-full ${getStatusStyles(
+                        lead.status
+                      )}`}
+                    >
+                      {lead.status || "Unknown"}
+                    </span>
+                    {lead.status === "In Follow-up" && (
+                      <span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded">
+                        {lead.followUpReminderDays || 2} min {/* TESTING: minutes instead of days */}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
               <div className="space-y-2 text-gray-600 text-sm">

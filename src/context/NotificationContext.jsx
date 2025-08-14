@@ -22,6 +22,12 @@ export const NotificationProvider = ({ children }) => {
 
   // Fetch notifications - wrapped in useCallback to prevent unnecessary re-renders
   const fetchNotifications = useCallback(async (page = 1, limit = 20) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.log('No token found, skipping fetchNotifications');
+      return null;
+    }
+
     try {
       setLoading(true);
       const response = await api.get(`/api/notifications?page=${page}&limit=${limit}`);
@@ -31,7 +37,10 @@ export const NotificationProvider = ({ children }) => {
       return response;
     } catch (error) {
       console.error("Error fetching notifications:", error);
-      toast.error("Failed to load notifications");
+      // Only show toast if user is logged in
+      if (token) {
+        toast.error("Failed to load notifications");
+      }
       return null;
     } finally {
       setLoading(false);
@@ -39,6 +48,12 @@ export const NotificationProvider = ({ children }) => {
   }, []); // Empty dependency array since this function doesn't depend on any state
 
   const fetchUnreadCount = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.log('No token found, skipping fetchUnreadCount');
+      return;
+    }
+
     try {
       const response = await api.get("/api/notifications/unread-count");
       setUnreadCount(response.unreadCount || 0);
@@ -62,6 +77,12 @@ export const NotificationProvider = ({ children }) => {
 
   // Force immediate notification check (for testing and after user actions)
   const forceNotificationCheck = useCallback(async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      console.log('No token found, skipping forceNotificationCheck');
+      return;
+    }
+
     try {
       const response = await fetchNotifications(1, 20);
       if (response) {
@@ -132,10 +153,21 @@ export const NotificationProvider = ({ children }) => {
     audio.play().catch((err) => console.warn("Sound play blocked by browser:", err));
   };
 
+  // Clear notifications when user logs out
+  const clearNotifications = useCallback(() => {
+    setNotifications([]);
+    setUnreadCount(0);
+    setLoading(false);
+    console.log('Notifications cleared due to logout');
+  }, []);
+
   // Immediate unread count fetch on mount (faster than full notification fetch)
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) return;
+    if (!token) {
+      console.log('No token found, skipping notification fetch');
+      return;
+    }
 
     // Quick unread count fetch for immediate UI feedback
     fetchUnreadCount();
@@ -144,7 +176,10 @@ export const NotificationProvider = ({ children }) => {
   // Initial fetch and polling for notifications
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) return;
+    if (!token) {
+      console.log('No token found, skipping notification polling');
+      return;
+    }
 
     const poll = async () => {
       // Prevent multiple simultaneous polls
@@ -178,8 +213,8 @@ export const NotificationProvider = ({ children }) => {
     // Run immediately on mount for instant notification count
     poll();
 
-    // Then continue polling every 30 seconds
-    const interval = setInterval(poll, 30000);
+    // Then continue polling every 15 seconds for better responsiveness
+    const interval = setInterval(poll, 15000);
     return () => clearInterval(interval);
   }, []); // ✅ empty deps — no warning
 
@@ -195,6 +230,7 @@ export const NotificationProvider = ({ children }) => {
     markAllAsRead,
     deleteNotification,
     addNotification,
+    clearNotifications,
   };
 
   return <NotificationContext.Provider value={value}>{children}</NotificationContext.Provider>;

@@ -30,6 +30,8 @@ const NotificationBell = () => {
 
       // Fetch unread count immediately when component mounts
       fetchUnreadCount();
+    } else {
+      console.log('NotificationBell: No token found, skipping initialization');
     }
   }, [navigate, fetchUnreadCount]);
 
@@ -46,7 +48,8 @@ const NotificationBell = () => {
 
   // Fetch notifications when dropdown opens
   useEffect(() => {
-    if (isOpen) {
+    const token = localStorage.getItem("token");
+    if (isOpen && token) {
       // If we have no notifications, fetch them
       if (notifications.length === 0) {
         fetchNotifications(1, 5);
@@ -54,6 +57,8 @@ const NotificationBell = () => {
         // If we have notifications, just refresh them
         refreshNotifications();
       }
+    } else if (isOpen && !token) {
+      console.log('NotificationBell: No token found, skipping notification fetch on dropdown open');
     }
   }, [isOpen, notifications.length, fetchNotifications, refreshNotifications]);
 
@@ -124,6 +129,12 @@ const NotificationBell = () => {
       clickTimeoutRef.current = null;
     }, 300);
   };
+
+  // Don't render notification bell if user is not logged in
+  const token = localStorage.getItem("token");
+  if (!token) {
+    return null;
+  }
 
   return (
     <div className="relative" ref={dropdownRef}>

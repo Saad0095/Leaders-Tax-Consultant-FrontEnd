@@ -8,12 +8,15 @@ import {
   FiUser,
   FiClock,
   FiX,
+  FiFileText,
+  FiFile,
 } from "react-icons/fi";
 import { MdOutlineWhatsapp } from "react-icons/md";
 import DateTimePicker from "react-datetime-picker";
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
+import api from "../utils/api";
 
 const statusColors = {
   "Meeting Fixed": "bg-blue-100 text-blue-800 border border-blue-300",
@@ -54,6 +57,8 @@ const InfoRowInput = ({
 );
 
 const EditLeadModal = ({ lead, onClose, onUpdate }) => {
+  const [files, setFiles] = useState([]);
+
   const [formData, setFormData] = useState({
     companyName: "",
     customerName: "",
@@ -65,6 +70,7 @@ const EditLeadModal = ({ lead, onClose, onUpdate }) => {
     meetingDateAndTime: "",
     service: "",
     language: "",
+    revenueAmount: "",
     notesByKarUser: "",
     notesByDubUser: "",
     status: "",
@@ -86,6 +92,7 @@ const EditLeadModal = ({ lead, onClose, onUpdate }) => {
           : "",
         service: lead.service || "",
         language: lead.language || "",
+        revenueAmount: lead.revenueAmount ?? "",
         notesByKarUser: lead.notesByKarUser || "",
         notesByDubUser: lead.notesByDubUser || "",
         status: lead.status || "",
@@ -126,6 +133,20 @@ const EditLeadModal = ({ lead, onClose, onUpdate }) => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const fetchFiles = async () => {
+      try {
+        const res = await api.get(`/api/leads/${lead._id}/files`);
+        if (res.files) {
+          setFiles(res.files);
+        }
+      } catch (error) {
+        console.error("Error fetching lead files:", error);
+      }
+    };
+    fetchFiles();
+  }, [lead._id]);
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -261,7 +282,39 @@ const EditLeadModal = ({ lead, onClose, onUpdate }) => {
               onChange={handleChange}
               disabled={loading}
             />
+            <InfoRowInput
+              icon={FiFileText}
+              label="Revenue Amount"
+              name="revenueAmount"
+              value={formData.revenueAmount}
+              onChange={handleChange}
+              disabled={loading}
+            />
           </div>
+
+          {files.length > 0 && (
+            <div>
+              <h3 className="font-semibold text-gray-800 mb-2">Files</h3>
+              <ul className="space-y-1">
+                {files.map((file, i) => (
+                  <li key={i}>
+                    <a
+                      href={`${import.meta.env.VITE_BASE_URL}/${file.replace(
+                        /\\/g,
+                        "/"
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center space-x-2 text-blue-600 hover:underline"
+                    >
+                      <FiFile />
+                      <span>{file.split(/[\\/]/).pop()}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <div>
             <label

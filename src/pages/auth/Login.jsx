@@ -3,6 +3,7 @@ import { useState } from "react";
 import api from "../../utils/api";
 import { toast, ToastContainer } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
+import Logo from "../../assets/Leaders-logo.webp";
 import Loading from "../../components/Loading";
 import { FaEye, FaEyeSlash, FaLock, FaRegEnvelope } from "react-icons/fa";
 
@@ -47,7 +48,10 @@ const Login = () => {
 
   return (
     <div className="min-h-screen relative flex items-center justify-center overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
+      <div
+        className="pointer-events-none absolute inset-0 -z-10"
+        aria-hidden="true"
+      >
         <div className="absolute inset-0 bg-[radial-gradient(100%_60%_at_50%_0%,#e0f2fe_0%,#ffffff_60%)]" />
         <div
           className="absolute inset-0 opacity-40"
@@ -56,8 +60,10 @@ const Login = () => {
               "linear-gradient(to right, rgba(13,39,108,0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(13,39,108,0.08) 1px, transparent 1px)",
             backgroundSize: "24px 24px",
             backgroundPosition: "center",
-            WebkitMaskImage: "radial-gradient(ellipse at center, black, transparent 70%)",
-            maskImage: "radial-gradient(ellipse at center, black, transparent 70%)",
+            WebkitMaskImage:
+              "radial-gradient(ellipse at center, black, transparent 70%)",
+            maskImage:
+              "radial-gradient(ellipse at center, black, transparent 70%)",
           }}
         />
         <div className="absolute -top-28 -left-32 h-96 w-96 rounded-full bg-[#0d276c]/20 blur-3xl" />
@@ -66,34 +72,46 @@ const Login = () => {
       <div
         className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{
-          background: "radial-gradient(closest-side, rgba(13,39,108,0.18), transparent 70%)",
+          background:
+            "radial-gradient(closest-side, rgba(13,39,108,0.18), transparent 70%)",
           filter: "blur(40px)",
         }}
         aria-hidden="true"
       />
 
-      <ToastContainer position="top-right" autoClose={2000} pauseOnHover={false} newestOnTop theme="colored" />
+      <ToastContainer
+        position="top-right"
+        autoClose={2000}
+        pauseOnHover={false}
+        newestOnTop
+        theme="colored"
+      />
 
       {!loading ? (
         <div className="relative w-full max-w-md p-1">
           <div className="rounded-2xl border border-white/20 bg-white/80 shadow-2xl backdrop-blur-xl">
             <div className="rounded-t-2xl bg-gradient-to-r from-[#0d276c] to-blue-600 p-6">
               <img
-                src="https://leaderstaxconsultant.com/wp-content/uploads/2025/08/Leaders-logo-final-white-1.webp"
-                alt="Leaders Tax Consultant logo"
+                src={Logo}
+                alt="Leaders Tax Collection"
                 className="mx-auto h-12 w-auto"
               />
             </div>
 
             <div className="px-6 pb-6 pt-6">
               <div className="mb-2 text-center">
-                <h2 className="text-2xl font-bold tracking-tight text-gray-900">Welcome back</h2>
+                <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+                  Welcome back
+                </h2>
                 <p className="mt-1 text-sm text-gray-600">Log in to continue</p>
               </div>
 
               <form onSubmit={handleLogin} className="mt-6 space-y-4">
                 <div>
-                  <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="email"
+                    className="mb-1 block text-sm font-medium text-gray-700"
+                  >
                     Email
                   </label>
                   <div className="relative">
@@ -115,7 +133,10 @@ const Login = () => {
                 </div>
 
                 <div>
-                  <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-700">
+                  <label
+                    htmlFor="password"
+                    className="mb-1 block text-sm font-medium text-gray-700"
+                  >
                     Password
                   </label>
                   <div className="relative">
@@ -136,9 +157,15 @@ const Login = () => {
                       type="button"
                       onClick={() => setShowPassword((s) => !s)}
                       className="absolute top-1 inset-y-0 right-0 mr-2 flex h-10 w-10 items-center justify-center rounded-md text-gray-500 hover:text-gray-700 outline-none cursor-pointer"
-                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
                     >
-                      {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                      {showPassword ? (
+                        <FaEyeSlash size={18} />
+                      ) : (
+                        <FaEye size={18} />
+                      )}
                     </button>
                   </div>
                 </div>
@@ -163,7 +190,9 @@ const Login = () => {
                 </button>
               </form>
 
-              <p className="mt-5 text-center text-xs text-gray-500">Protected area. Authorized users only.</p>
+              <p className="mt-5 text-center text-xs text-gray-500">
+                Protected area. Authorized users only.
+              </p>
             </div>
           </div>
         </div>
@@ -171,7 +200,7 @@ const Login = () => {
         <Loading />
       )}
     </div>
-  )
+  );
 };
 
 export default Login;

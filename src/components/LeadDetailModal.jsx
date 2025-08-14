@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import {
   FiPhone,
   FiMail,
@@ -11,6 +12,7 @@ import {
 } from "react-icons/fi";
 import { MdOutlineWhatsapp } from "react-icons/md";
 import InfoRow from "./InfoRow";
+import api from "../utils/api";
 
 const statusColors = {
   "Meeting Fixed": "bg-blue-100 text-blue-800 border border-blue-300",
@@ -22,8 +24,22 @@ const statusColors = {
   Closed: "bg-gray-200 text-gray-800 border border-gray-300",
 };
 
-
 const LeadDetailModal = ({ lead, onClose }) => {
+  const [files, setFiles] = useState([]);
+
+  const getFiles = async () => {
+    try {
+      const res = await api.get(`/api/leads/${lead._id}/files`);
+      console.log(res.files);
+      setFiles(res.files);
+    } catch (error) {
+      console.error("Error fetching lead files:", error);
+    }
+  };
+  useEffect(() => {
+    getFiles();
+  }, [lead._id]);
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl w-full max-w-3xl shadow-2xl animate-fadeIn overflow-hidden">
@@ -40,6 +56,7 @@ const LeadDetailModal = ({ lead, onClose }) => {
         </div>
 
         <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+          {/* Status */}
           <div>
             <span
               className={`inline-block px-3 py-1 rounded-full text-sm font-medium shadow-sm ${
@@ -111,30 +128,34 @@ const LeadDetailModal = ({ lead, onClose }) => {
             />
           </div>
 
+          {/* Revenue */}
           <InfoRow
             icon={FiFileText}
             label="Revenue Amount"
             value={
               lead.revenueAmount !== undefined && lead.revenueAmount !== null
-                ? `$${lead.revenueAmount.toLocaleString()}`
+                ? `AED${lead.revenueAmount.toLocaleString()}`
                 : "N/A"
             }
           />
 
-          {lead.files?.length > 0 && (
+          {/* Files */}
+          {files.length > 0 && (
             <div>
               <h3 className="font-semibold text-gray-800 mb-2">Files</h3>
               <ul className="space-y-1">
-                {lead.files.map((file, i) => (
+                {files.map((file, i) => (
                   <li key={i}>
                     <a
-                      href={file}
+                      href={`${
+                        import.meta.env.VITE_BASE_URL
+                      }/${file.replace(/\\/g, "/")}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center space-x-2 text-blue-600 hover:underline"
                     >
                       <FiFile />
-                      <span>{file.split("/").pop()}</span>
+                      <span>{file.split(/[\\/]/).pop()}</span>
                     </a>
                   </li>
                 ))}

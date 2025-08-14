@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
+import { FiFile } from "react-icons/fi";
 import api from "../utils/api";
 
 const EditLeadModalDubai = ({ lead, onClose, onUpdated }) => {
@@ -8,6 +9,7 @@ const EditLeadModalDubai = ({ lead, onClose, onUpdated }) => {
   const [notes, setNotes] = useState(lead.notesByDubAgent || "");
   const [revenue, setRevenue] = useState(lead.revenueAmount || "");
   const [files, setFiles] = useState([]);
+  const [existingFiles, setExistingFiles] = useState([]);
 
   const statusOptions = [
     "Meeting Fixed",
@@ -18,6 +20,21 @@ const EditLeadModalDubai = ({ lead, onClose, onUpdated }) => {
     "Deal Done",
     "Closed",
   ];
+
+  // Fetch existing files
+  useEffect(() => {
+    const fetchFiles = async () => {
+      try {
+        const res = await api.get(`/api/leads/${lead._id}/files`);
+        if (res.files) {
+          setExistingFiles(res.files);
+        }
+      } catch (error) {
+        console.error("Error fetching lead files:", error);
+      }
+    };
+    fetchFiles();
+  }, [lead._id]);
 
   const handleSave = async () => {
     if (status === "Deal Done" && !revenue) {
@@ -79,6 +96,7 @@ const EditLeadModalDubai = ({ lead, onClose, onUpdated }) => {
         </div>
 
         <div className="px-6 py-4 space-y-4">
+          {/* Status */}
           <div>
             <label className="block text-sm font-medium mb-1">Status</label>
             <select
@@ -94,6 +112,7 @@ const EditLeadModalDubai = ({ lead, onClose, onUpdated }) => {
             </select>
           </div>
 
+          {/* Notes */}
           <div>
             <label className="block text-sm font-medium mb-1">Notes</label>
             <textarea
@@ -107,6 +126,7 @@ const EditLeadModalDubai = ({ lead, onClose, onUpdated }) => {
 
           {status === "Deal Done" && (
             <>
+              {/* Revenue */}
               <div>
                 <label className="block text-sm font-medium mb-1">
                   Revenue Amount (AED)
@@ -121,13 +141,39 @@ const EditLeadModalDubai = ({ lead, onClose, onUpdated }) => {
                 />
               </div>
 
+              {/* Existing Files */}
+              {existingFiles.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Existing Files
+                  </label>
+                  <ul className="space-y-1">
+                    {existingFiles.map((file, i) => (
+                      <li key={i}>
+                        <a
+                          href={`${
+                            import.meta.env.VITE_BASE_URL
+                          }/${file.replace(/\\/g, "/")}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center space-x-2 text-blue-600 hover:underline"
+                        >
+                          <FiFile />
+                          <span>{file.split(/[\\/]/).pop()}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Upload New File */}
               <div>
                 <label className="block text-sm font-medium mb-1">
-                  Invoice Files (optional)
+                  Upload New File (optional)
                 </label>
                 <input
                   type="file"
-                  multiple
                   onChange={(e) => setFiles([...e.target.files])}
                   className="w-full border border-gray-300 rounded-lg p-2 bg-gray-50"
                 />

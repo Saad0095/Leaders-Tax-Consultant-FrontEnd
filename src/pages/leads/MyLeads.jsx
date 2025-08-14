@@ -180,6 +180,11 @@ const MyLeads = () => {
                   >
                     {lead.status || "Unknown"}
                   </span>
+                  {lead.status === "In Follow-up" && (
+                    <span className="ml-2 px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded">
+                      {lead.followUpReminderDays || 3} days
+                    </span>
+                  )}
                 </div>
 
               <div className="space-y-2 text-gray-600 text-sm">

@@ -10,6 +10,7 @@ const EditLeadModalDubai = ({ lead, onClose, onUpdated }) => {
   const [revenue, setRevenue] = useState(lead.revenueAmount || "");
   const [files, setFiles] = useState([]);
   const [existingFiles, setExistingFiles] = useState([]);
+  const [followUpReminderDays, setFollowUpReminderDays] = useState(lead.followUpReminderDays || 3);
 
   const statusOptions = [
     "Meeting Fixed",
@@ -41,10 +42,24 @@ const EditLeadModalDubai = ({ lead, onClose, onUpdated }) => {
       toast.error("Please enter revenue amount before saving.");
       return;
     }
+
+    // Validate follow-up reminder days
+    if (status === "In Follow-up" && (followUpReminderDays < 1 || followUpReminderDays > 30)) {
+      toast.error("Follow-up reminder days must be between 1 and 30.");
+      return;
+    }
+
     setLoading(true);
     try {
-      if (status !== lead.status) {
-        await api.patch(`/api/leads/${lead._id}/status`, { status });
+      // Update status (and follow-up days if applicable)
+      if (status !== lead.status || (status === "In Follow-up" && followUpReminderDays !== (lead.followUpReminderDays || 3))) {
+        const statusData = { status };
+        if (status === "In Follow-up") {
+          statusData.followUpReminderDays = followUpReminderDays;
+          console.log('Sending follow-up days:', followUpReminderDays); // Debug log
+        }
+        console.log('Updating status with data:', statusData); // Debug log
+        await api.patch(`/api/leads/${lead._id}/status`, statusData);
       }
       if (notes !== lead.notesByDubAgent && notes.trim() !== "") {
         await api.put(`/api/leads/${lead._id}/notes`, {
@@ -111,6 +126,30 @@ const EditLeadModalDubai = ({ lead, onClose, onUpdated }) => {
               ))}
             </select>
           </div>
+
+          {/* Follow-up Reminder Days (only show when status is "In Follow-up") */}
+          {status === "In Follow-up" && (
+            <div>
+              <label className="block text-sm font-medium mb-1">
+                Follow-up Reminder (Days)
+              </label>
+              <input
+                type="number"
+                min="1"
+                max="30"
+                value={followUpReminderDays}
+                onChange={(e) => setFollowUpReminderDays(Number(e.target.value))}
+                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300 bg-gray-50"
+                placeholder="Enter days (1-30)"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                You'll receive a reminder after this many days (default: 3 days)
+              </p>
+              <p className="text-xs text-blue-600 mt-1">
+                Current value: {followUpReminderDays} | Lead current: {lead.followUpReminderDays || 3}
+              </p>
+            </div>
+          )}
 
           {/* Notes */}
           <div>

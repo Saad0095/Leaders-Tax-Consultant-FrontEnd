@@ -207,7 +207,6 @@ const AddLeadModal = ({ onLeadAdded, onClose }) => {
               clearIcon={null}
               disableClock
               format="dd MMM yyyy, h:mm a"
-              minDate={new Date()}
             />
           </div>
 
@@ -265,7 +264,7 @@ const AddLeadModal = ({ onLeadAdded, onClose }) => {
               <option value="Meeting Done">Meeting Done</option>
               <option value="Postponed">Postponed</option>
               <option value="Cancelled">Cancelled</option>
-              <option value="Closed">Closed</option>
+              {/* <option value="Closed">Closed</option> */}
             </select>
           </div>
 

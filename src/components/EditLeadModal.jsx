@@ -25,7 +25,7 @@ const statusColors = {
   "Not Interested": "bg-red-100 text-red-800 border border-red-300",
   "Not Responding": "bg-orange-100 text-orange-800 border border-orange-300",
   "Deal Done": "bg-emerald-100 text-emerald-800 border border-emerald-300",
-  Closed: "bg-gray-200 text-gray-800 border border-gray-300",
+  // Closed: "bg-gray-200 text-gray-800 border border-gray-300",
 };
 
 const InfoRowInput = ({
@@ -72,7 +72,7 @@ const EditLeadModal = ({ lead, onClose, onUpdate }) => {
     language: "",
     revenueAmount: "",
     notesByKarUser: "",
-    notesByDubUser: "",
+    notesByDubAgent: "",
     status: "",
   });
   const [loading, setLoading] = useState(false);
@@ -94,7 +94,7 @@ const EditLeadModal = ({ lead, onClose, onUpdate }) => {
         language: lead.language || "",
         revenueAmount: lead.revenueAmount ?? "",
         notesByKarUser: lead.notesByKarUser || "",
-        notesByDubUser: lead.notesByDubUser || "",
+        notesByDubAgent: lead.notesByDubAgent || "",
         status: lead.status || "",
       });
     }
@@ -260,7 +260,6 @@ const EditLeadModal = ({ lead, onClose, onUpdate }) => {
                   clearIcon={null}
                   disableClock
                   format="dd MMM yyyy, h:mm a"
-                  minDate={new Date()}
                   disabled={loading}
                 />
               </div>

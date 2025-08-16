@@ -30,7 +30,6 @@ const LeadDetailModal = ({ lead, onClose }) => {
   const getFiles = async () => {
     try {
       const res = await api.get(`/api/leads/${lead._id}/files`);
-      console.log(res.files);
       setFiles(res.files);
     } catch (error) {
       console.error("Error fetching lead files:", error);

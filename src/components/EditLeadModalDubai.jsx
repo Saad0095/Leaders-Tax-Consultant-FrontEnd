@@ -21,7 +21,6 @@ const EditLeadModalDubai = ({ lead, onClose, onUpdated }) => {
     "Not Interested",
     "Not Responding",
     "Deal Done",
-    "Closed",
   ];
 
   // Fetch existing files
